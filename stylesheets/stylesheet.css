@@ -8,12 +8,6 @@ body {
   font-size: 16px;
   line-height: 1.5;
   color: #606c71; }
-
-a {
-  color: #1e6bb8;
-  text-decoration: none; }
-  a:hover {
-    text-decoration: underline; }
     
 .gh-logo {
     vertical-align: middle;
@@ -32,7 +26,7 @@ a {
   .btn + .btn {
     margin-left: 1rem; }
     
-.btn>.btnlink {
+.btn>.btn-link {
   vertical-align: middle;
   color: rgba(255, 255, 255, 0.7);
   transition: color 0.2s; }
@@ -44,10 +38,16 @@ a {
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-.btn:hover>.btnlink {
+.btn:hover>.btn-link {
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
 }
+
+a {
+  color: #1e6bb8;
+  text-decoration: none; }
+  a:hover {
+    text-decoration: underline; }
 
 @media screen and (min-width: 64em) {
   .btn {
