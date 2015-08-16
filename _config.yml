@@ -4,7 +4,7 @@ email: milkey-mouse@team-ivan.com
 description: > # this means to ignore newlines until "baseurl:"
   A game about what some people think hacking is
 baseurl: "/h4x0r" # the subpath of your site, e.g. /blog/
-url: "http://h4x0r.team-ivan.com/" # the base hostname & protocol for your site
+url: "http://milkey-mouse.github.io" # the base hostname & protocol for your site
 twitter_username: username
 github_username: milkey-mouse
 
