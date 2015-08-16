@@ -1,11 +1,12 @@
 # Site settings
-title: H4X0R
-email: milkey-mouse@team-ivan.com
-description: A game about what some people think hacking is
-baseurl: "/h4x0r/" # the subpath of your site, e.g. /blog/
-url: "http://milkey-mouse.github.io/" # the base hostname & protocol for your site
+title: Polar Bear
+email: 
+description: > # this means to ignore newlines until "baseurl:"
+  Jekyll Theme Demo
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: "http://username.github.io" # the base hostname & protocol for your site
 twitter_username: username
-github_username: milkey-mouse
+github_username: username
 
 # Build settings
 markdown: redcarpet
