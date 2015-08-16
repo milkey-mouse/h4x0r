@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"target": "ES5",
+		"module": "commonjs",
+		"sourceMap": true,
+		"removeComments": true,
+		"out": "bin/js/game.js"
+	},
+	"files": [
+        "src/*"
+    ]
+}
