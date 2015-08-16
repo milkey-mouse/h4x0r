@@ -1,10 +1,9 @@
 # Site settings
 title: H4X0R
 email: milkey-mouse@team-ivan.com
-description: > # this means to ignore newlines until "baseurl:"
-  A game about what some people think hacking is
-baseurl: "/h4x0r" # the subpath of your site, e.g. /blog/
-url: "http://milkey-mouse.github.io" # the base hostname & protocol for your site
+description: A game about what some people think hacking is
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: "http://milkey-mouse.github.io/h4x0r" # the base hostname & protocol for your site
 twitter_username: username
 github_username: milkey-mouse
 
