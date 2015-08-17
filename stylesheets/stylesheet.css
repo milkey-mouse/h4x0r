@@ -13,7 +13,7 @@ src: url('fonts/wendy.eot') format('embedded-opentype'),
 body {
   padding: 0;
   margin: 0;
-  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Inconsolata", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   color: #606c71; }
@@ -131,11 +131,14 @@ a {
   margin-top: 0; }
 .main-content img {
   max-width: 100%; }
+.main-content h1 {
+  font-family: "Inconsolata", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 700; }
 .main-content h1, .main-content h2, .main-content h3, .main-content h4, .main-content h5, .main-content h6 {
   margin-top: 2rem;
   margin-bottom: 1rem;
   font-weight: normal;
-  color: #159957; }
+  color: #F00; }
 .main-content p {
   margin-bottom: 1em; }
 .main-content code {
