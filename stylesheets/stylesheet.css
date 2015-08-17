@@ -21,6 +21,9 @@ body {
 
 .cursor {
   margin-left: -17px; }
+  
+.offset-logo {
+  margin-left: 50px; }
 
 .teamivan {
   font-family: "wendy", "Inconsolata", "Helvetica Neue", Helvetica, Arial, sans-serif;
