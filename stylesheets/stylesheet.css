@@ -20,8 +20,7 @@ body {
   color: #606c71; }
     
 .gh-logo {
-    vertical-align: middle;
-    padding-right: 5px; }
+  vertical-align: middle; }
 
 .btn {
   display: inline-block;
@@ -39,7 +38,9 @@ body {
 .btn>.btn-link {
   vertical-align: middle;
   color: rgba(255, 255, 255, 0.7);
-  transition: color 0.2s; }
+  transition: color 0.2s;
+  display: inherit;
+  padding-left: 5px; }
 
 .btn:hover {
   color: rgba(255, 255, 255, 0.8);
