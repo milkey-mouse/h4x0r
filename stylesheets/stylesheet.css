@@ -1,11 +1,11 @@
 @font-face {
 font-family: 'wendy';
-src: url('./fonts/wendy.eot');
-src: url('./fonts/wendy.eot') format('embedded-opentype'),
-     url('./fonts/wendy.woff2') format('woff2'),
-     url('./fonts/wendy.woff') format('woff'),
-     url('./fonts/wendy.ttf') format('truetype'),
-     url('./fonts/wendy.svg#wendy') format('svg'); }
+src: url('../fonts/wendy.eot');
+src: url('../fonts/wendy.eot') format('embedded-opentype'),
+     url('../fonts/wendy.woff2') format('woff2'),
+     url('../fonts/wendy.woff') format('woff'),
+     url('../fonts/wendy.ttf') format('truetype'),
+     url('../fonts/wendy.svg#wendy') format('svg'); }
 
 * {
   box-sizing: border-box; }
