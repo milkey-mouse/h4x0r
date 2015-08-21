@@ -34,7 +34,7 @@
 {
 	"command": "tsc",
 	"isShellCommand": true,
-	"showOutput": "always",
+	"showOutput": "silent",
 	"problemMatcher": "$tsc"
 }
 
