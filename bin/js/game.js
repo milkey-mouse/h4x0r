@@ -125,6 +125,10 @@ var Haxor;
             this.loadvid.onComplete.add(this.actionComplete, this);
             this.loadvid.play(false);
             this.loadvid.addToWorld(this.game.world.centerX, this.game.world.centerY, 0.5, 0.5);
+            console.log(this.loadvid.playing);
+            if (!this.loadvid.playing) {
+                this.loadvid.play(false);
+            }
         };
         Boot.prototype.update = function () {
             if (this.skip != null) {
@@ -163,7 +167,7 @@ var Haxor;
         Mobile.prototype.create = function () {
             this.stage.setBackgroundColor(0xFFFFFF);
             this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, "badtime").anchor = new Phaser.Point(0.5, 0.5);
-            var skip = this.game.add.button(this.game.world.centerX, this.game.world.centerY + 250, 'skip', this.backToGame, this, 2, 1, 0);
+            var skip = this.game.add.button(this.game.world.centerX, this.game.world.centerY + 250, 'whateva', this.backToGame, this, 2, 1, 0);
             skip.anchor = new Phaser.Point(0.5, 0.5);
             skip.scale = new Phaser.Point(2, 2);
         };
