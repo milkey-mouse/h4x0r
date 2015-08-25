@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"target": "ES5",
 		"removeComments": true,
-		"out": "bin/js/game.js"
+		"out": "bin/js/game.js",
+		"sourceMap": false
 	}
 }
