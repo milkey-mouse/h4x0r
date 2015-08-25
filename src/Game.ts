@@ -1,6 +1,7 @@
 /// <reference path="../tsDefinitions/phaser.d.ts" />
 /// <reference path="Boot.ts" />
-/// <reference path="VideoLoad.ts" />
+/// <reference path="Mobile.ts" />
+/// <reference path="MainMenu.ts" />
 
 module Haxor
 {
@@ -16,8 +17,8 @@ module Haxor
             super(window.innerWidth, window.innerHeight, Phaser.AUTO, 'content', null, false, false);
             
             this.state.add('Boot', Boot, false);
-            //this.state.add('Preloader', Preloader, false);
-            //this.state.add('MainMenu', MainMenu, false);
+            this.state.add('Mobile', Mobile, false);
+            this.state.add('MainMenu', MainMenu, false);
             //this.state.add('Level1', Level1, false);
             
             console.log("V293LCB5b3UgcmVhbGx5IGFyZSBhbiAzMTMzNyBoNHgwciEKCmh0dHA6Ly9iaXQubHkvMWRKTFNvVwoK");

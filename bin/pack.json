@@ -1,16 +1,20 @@
 { 
     "main": [
         {
-            "type": "image",
-            "key": "logo",
-            "url": "assets/logo.png",
-            "overwrite": false
-        },
-        {
             "type": "script",
             "key": "webfont",
-            "url": "//ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js",
-            "overwrite": false
+            "url": "//ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"
+        },
+        {
+            "type": "image",
+            "key": "logo",
+            "url": "assets/logo.png"
+        },
+        {
+            "type": "bitmapFont",
+            "key": "terminal",
+            "textureURL": "fonts/terminal.png",
+            "atlasURL": "fonts/terminal.json"
         }
     ]
 }

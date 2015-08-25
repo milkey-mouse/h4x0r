@@ -1,4 +1,5 @@
 /// <reference path="../tsDefinitions/phaser.d.ts" />
+/// <reference path="CookieHelper.ts" />
 /// <reference path="VideoLoad.ts" />
 
 module Haxor
@@ -13,14 +14,21 @@ module Haxor
 		{
 			if(!this.game.device.desktop) //first thing to prevent eating bandwidth
 			{
-				window.location.replace("/mobile.html");
+				var ch = new CookieHelper();
+				if(ch.readCookie("warnmobile") != "yes")
+				{
+					this.game.state.start("Mobile", true, false);
+				}
 			}
 			this.vload.getVideo("intro", "assets/intro", this.load);
+			this.load.spritesheet("skip", "assets/skip.png", 50, 25);
 		}
 		
 		complete = 0;
 		
 		otherloader : Phaser.Loader;
+		
+		skip : Phaser.Button;
 		
 		create()
 		{
@@ -31,14 +39,8 @@ module Haxor
 			//scale like a desktop
 			this.scale.currentScaleMode = Phaser.ScaleManager.SHOW_ALL;
 			//seems to work on 90 percent of desktops
-			if(this.game.renderType == Phaser.CANVAS)
-			{
-				Phaser.Canvas.setSmoothingEnabled(this.game.context, false);
-			}
-			else
-			{
-				this.game.antialias = false;
-			}
+			this.game.antialias = false;
+			this.stage.smoothed = false;
 			this.stage.setBackgroundColor(0x000000);
 			
 			this.scale.forceLandscape = true;
@@ -49,6 +51,7 @@ module Haxor
 			
 			this.otherloader = new Phaser.Loader(this.game);
 			this.otherloader.pack("main", "pack.json");
+			this.otherloader.onLoadComplete.add(this.addSkipButton, this);
 			this.otherloader.onLoadComplete.add(this.actionComplete, this);
 			this.otherloader.start();
 			
@@ -59,12 +62,28 @@ module Haxor
 			this.loadvid.addToWorld(this.game.world.centerX, this.game.world.centerY, 0.5, 0.5);
 		}
 		
+		update()
+		{
+			if(this.skip != null)
+			{
+				this.skip.position = new Phaser.Point(this.game.world.width - 125, this.game.world.height - 75);
+			}
+		}
+		
+		addSkipButton()
+		{
+			this.skip = this.game.add.button(this.game.world.width - 125, this.game.world.height - 75, 'skip', this.actionComplete, this, 2, 1, 0);
+			this.skip.scale.setTo(2,2);
+		}
+		
 		actionComplete()
 		{
 			this.complete += 1;
 			if(this.complete == 2)
 			{
-				console.log("done");
+				this.loadvid.stop();
+				this.loadvid.destroy();
+				this.game.state.start("MainMenu", true, false);
 			}
 		}
 	}
