@@ -1,3 +1,26 @@
+/// <reference path="../tsDefinitions/phaser.d.ts" />
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var Haxor;
+(function (Haxor) {
+    var MainMenu = (function (_super) {
+        __extends(MainMenu, _super);
+        function MainMenu() {
+            _super.apply(this, arguments);
+        }
+        MainMenu.prototype.create = function () {
+            console.log("yo");
+        };
+        MainMenu.prototype.update = function () {
+        };
+        return MainMenu;
+    })(Phaser.State);
+    Haxor.MainMenu = MainMenu;
+})(Haxor || (Haxor = {}));
 var Haxor;
 (function (Haxor) {
     var CookieHelper = (function () {
@@ -42,7 +65,12 @@ var Haxor;
             this.mp4 = this.canPlay("mp4", testEl);
             this.webm = this.canPlay("webm", testEl);
             this.ogg = this.canPlay("ogg", testEl);
-            testEl.remove();
+            try {
+                testEl.remove();
+            }
+            catch (e) {
+                console.warn("failed to remove video test element");
+            }
         }
         VideoLoad.prototype.canPlay = function (type, testEl) {
             var result = false;
@@ -81,12 +109,6 @@ var Haxor;
 /// <reference path="../tsDefinitions/phaser.d.ts" />
 /// <reference path="CookieHelper.ts" />
 /// <reference path="VideoLoad.ts" />
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
 var Haxor;
 (function (Haxor) {
     var Boot = (function (_super) {
@@ -97,6 +119,7 @@ var Haxor;
             this.complete = 0;
         }
         Boot.prototype.preload = function () {
+            console.log("V293LCB5b3UgcmVhbGx5IGFyZSBhbiAzMTMzNyBoNHgwciEKCmh0dHA6Ly9iaXQubHkvMWRKTFNvVwoK");
             if (!this.game.device.desktop) {
                 var ch = new Haxor.CookieHelper();
                 if (ch.readCookie("warnmobile") != "yes") {
@@ -125,10 +148,6 @@ var Haxor;
             this.loadvid.onComplete.add(this.actionComplete, this);
             this.loadvid.play(false);
             this.loadvid.addToWorld(this.game.world.centerX, this.game.world.centerY, 0.5, 0.5);
-            console.log(this.loadvid.playing);
-            if (!this.loadvid.playing) {
-                this.loadvid.play(false);
-            }
         };
         Boot.prototype.update = function () {
             if (this.skip != null) {
@@ -192,6 +211,7 @@ var Haxor;
             console.log("yo");
         };
         MainMenu.prototype.update = function () {
+            console.log(this.game.make.bitmapData().replaceRGB(255, 255, 255, 255, 255, 0, 0, 255));
         };
         return MainMenu;
     })(Phaser.State);
@@ -206,11 +226,10 @@ var Haxor;
     var Game = (function (_super) {
         __extends(Game, _super);
         function Game() {
-            _super.call(this, window.innerWidth, window.innerHeight, Phaser.AUTO, 'content', null, false, false);
+            _super.call(this, window.innerWidth, window.innerHeight, Phaser.CANVAS, 'content', null, false, false);
             this.state.add('Boot', Haxor.Boot, false);
             this.state.add('Mobile', Haxor.Mobile, false);
             this.state.add('MainMenu', Haxor.MainMenu, false);
-            console.log("V293LCB5b3UgcmVhbGx5IGFyZSBhbiAzMTMzNyBoNHgwciEKCmh0dHA6Ly9iaXQubHkvMWRKTFNvVwoK");
             this.state.start('Boot');
         }
         Game.prototype.fixSize = function (event) {
@@ -231,6 +250,12 @@ var Haxor;
 })(Haxor || (Haxor = {}));
 window.onload = function () {
     var game = new Haxor.Game();
-    window.addEventListener("resize", game.fixSize, false);
+    try {
+        window.addEventListener("resize", game.fixSize, false);
+    }
+    catch (e) {
+        window.onload = game.fixSize;
+        console.warn("overriding window.onload instead of addEventListener");
+    }
     window.game = game;
 };

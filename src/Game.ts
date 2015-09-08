@@ -14,14 +14,12 @@ module Haxor
 	{   
 	    constructor()
 	    {
-            super(window.innerWidth, window.innerHeight, Phaser.AUTO, 'content', null, false, false);
+            super(window.innerWidth, window.innerHeight, Phaser.CANVAS, 'content', null, false, false);
             
             this.state.add('Boot', Boot, false);
             this.state.add('Mobile', Mobile, false);
             this.state.add('MainMenu', MainMenu, false);
-            //this.state.add('Level1', Level1, false);
             
-            console.log("V293LCB5b3UgcmVhbGx5IGFyZSBhbiAzMTMzNyBoNHgwciEKCmh0dHA6Ly9iaXQubHkvMWRKTFNvVwoK");
             this.state.start('Boot');
         }
         
@@ -45,7 +43,15 @@ module Haxor
 window.onload = () => {
     var game = new Haxor.Game();
     
-    window.addEventListener("resize", game.fixSize, false);
+    try
+    {
+        window.addEventListener("resize", game.fixSize, false);
+    }
+    catch(e)
+    {
+        window.onload = game.fixSize;
+        console.warn("overriding window.onload instead of addEventListener");
+    }
     
     (<Haxor.GameWindow>window).game = game;
 };

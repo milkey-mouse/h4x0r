@@ -11,10 +11,9 @@
             "url": "assets/logo.png"
         },
         {
-            "type": "bitmapFont",
+            "type": "image",
             "key": "terminal",
-            "textureURL": "fonts/terminal.png",
-            "atlasURL": "fonts/terminal.json"
+            "url": "fonts/terminal.png"
         }
     ]
 }

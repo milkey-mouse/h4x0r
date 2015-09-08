@@ -54,7 +54,14 @@ module Haxor
 			this.mp4 = this.canPlay("mp4", testEl);
 			this.webm = this.canPlay("webm", testEl);
 			this.ogg = this.canPlay("ogg", testEl);
-			testEl.remove();
+			try
+			{
+				testEl.remove();
+			}
+			catch(e)
+			{
+				console.warn("failed to remove video test element");
+			}
 		}
 	}
 }

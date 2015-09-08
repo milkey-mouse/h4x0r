@@ -12,6 +12,7 @@ module Haxor
 		
 		preload()
 		{
+			console.log("V293LCB5b3UgcmVhbGx5IGFyZSBhbiAzMTMzNyBoNHgwciEKCmh0dHA6Ly9iaXQubHkvMWRKTFNvVwoK");
 			if(!this.game.device.desktop) //first thing to prevent eating bandwidth
 			{
 				var ch = new CookieHelper();
