@@ -1,26 +1,3 @@
-/// <reference path="../tsDefinitions/phaser.d.ts" />
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Haxor;
-(function (Haxor) {
-    var MainMenu = (function (_super) {
-        __extends(MainMenu, _super);
-        function MainMenu() {
-            _super.apply(this, arguments);
-        }
-        MainMenu.prototype.create = function () {
-            console.log("yo");
-        };
-        MainMenu.prototype.update = function () {
-        };
-        return MainMenu;
-    })(Phaser.State);
-    Haxor.MainMenu = MainMenu;
-})(Haxor || (Haxor = {}));
 var Haxor;
 (function (Haxor) {
     var CookieHelper = (function () {
@@ -109,6 +86,11 @@ var Haxor;
 /// <reference path="../tsDefinitions/phaser.d.ts" />
 /// <reference path="CookieHelper.ts" />
 /// <reference path="VideoLoad.ts" />
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var Haxor;
 (function (Haxor) {
     var Boot = (function (_super) {
@@ -209,9 +191,9 @@ var Haxor;
         }
         MainMenu.prototype.create = function () {
             console.log("yo");
+            console.log(this.game.make.bitmapData().replaceRGB(255, 255, 255, 255, 255, 0, 0, 255));
         };
         MainMenu.prototype.update = function () {
-            console.log(this.game.make.bitmapData().replaceRGB(255, 255, 255, 255, 255, 0, 0, 255));
         };
         return MainMenu;
     })(Phaser.State);
@@ -259,3 +241,17 @@ window.onload = function () {
     }
     window.game = game;
 };
+/// <reference path="../tsDefinitions/phaser.d.ts" />
+var Haxor;
+(function (Haxor) {
+    var TerminalTextHelper = (function () {
+        function TerminalTextHelper(bdata) {
+            this.original = bdata;
+        }
+        TerminalTextHelper.prototype.createColoredMap = function (r, g, b) {
+            console.log(this.original.replaceRGB(255, 255, 255, 255, r, g, b, 255));
+        };
+        return TerminalTextHelper;
+    })();
+    Haxor.TerminalTextHelper = TerminalTextHelper;
+})(Haxor || (Haxor = {}));
