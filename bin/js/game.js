@@ -244,29 +244,17 @@ window.onload = function () {
 /// <reference path="../tsDefinitions/phaser.d.ts" />
 var Haxor;
 (function (Haxor) {
-    (function (Escape) {
-        Escape[Escape["BLACK"] = 0] = "BLACK";
-        Escape[Escape["RED"] = 1] = "RED";
-        Escape[Escape["GREEN"] = 2] = "GREEN";
-        Escape[Escape["YELLOW"] = 3] = "YELLOW";
-        Escape[Escape["BLUE"] = 4] = "BLUE";
-        Escape[Escape["MAGENTA"] = 5] = "MAGENTA";
-        Escape[Escape["CYAN"] = 6] = "CYAN";
-        Escape[Escape["WHITE"] = 7] = "WHITE";
-        Escape[Escape["NONE"] = 0] = "NONE";
-        Escape[Escape["BRIGHT"] = 1] = "BRIGHT";
-        Escape[Escape["UNDERLINE"] = 4] = "UNDERLINE";
-        Escape[Escape["BLINK"] = 5] = "BLINK";
-        Escape[Escape["REVERSE"] = 7] = "REVERSE";
-        Escape[Escape["INVISIBLE"] = 9] = "INVISIBLE";
-    })(Haxor.Escape || (Haxor.Escape = {}));
-    var Escape = Haxor.Escape;
-    (function (Brightness) {
-        Brightness[Brightness["Bright"] = 0] = "Bright";
-        Brightness[Brightness["Normal"] = 1] = "Normal";
-        Brightness[Brightness["Dark"] = 2] = "Dark";
-    })(Haxor.Brightness || (Haxor.Brightness = {}));
-    var Brightness = Haxor.Brightness;
+    (function (TermColor) {
+        TermColor[TermColor["BLACK"] = 0] = "BLACK";
+        TermColor[TermColor["RED"] = 1] = "RED";
+        TermColor[TermColor["GREEN"] = 2] = "GREEN";
+        TermColor[TermColor["YELLOW"] = 3] = "YELLOW";
+        TermColor[TermColor["BLUE"] = 4] = "BLUE";
+        TermColor[TermColor["MAGENTA"] = 5] = "MAGENTA";
+        TermColor[TermColor["CYAN"] = 6] = "CYAN";
+        TermColor[TermColor["WHITE"] = 7] = "WHITE";
+    })(Haxor.TermColor || (Haxor.TermColor = {}));
+    var TermColor = Haxor.TermColor;
     var TerminalTextHelper = (function () {
         function TerminalTextHelper(game, bdata) {
             this.colors = [
@@ -284,16 +272,27 @@ var Haxor;
         }
         TerminalTextHelper.prototype.brightenize = function (color, brightness) {
             var newcolor = new Array(color.length);
-            if (brightness === Brightness.Bright) {
+            if (brightness === 0) {
                 for (var i = 0; i < color.length; i++) {
                     newcolor[i] = (color[i] != 0) ? 255 : 85;
                 }
             }
-            else if (brightness === Brightness.Normal) {
+            else {
                 for (var i = 0; i < color.length; i++) {
                     newcolor[i] = color[i] * 170;
                 }
             }
+            return newcolor;
+        };
+        TerminalTextHelper.prototype.colorizeMap = function (foreground, foreBrightness, background, backBrightness) {
+            if (background === void 0) { background = null; }
+            if (backBrightness === void 0) { backBrightness = 1; }
+            var forecolor = this.brightenize(this.colors[foreground], foreBrightness);
+            if (background === null) {
+                return this.createColoredMap(forecolor[0], forecolor[1], forecolor[2]);
+            }
+            var backcolor = this.brightenize(this.colors[background], backBrightness);
+            return this.createColoredMap(forecolor[0], forecolor[1], forecolor[2], backcolor[0], backcolor[1], backcolor[2]);
         };
         TerminalTextHelper.prototype.createColoredMap = function (r, g, b, br, bg, bb) {
             if (br === void 0) { br = null; }
