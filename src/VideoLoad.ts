@@ -26,7 +26,8 @@ module Haxor
 		
 		getVideo(vidname: string, urlNoExtension: string, loader: Phaser.Loader) : boolean
 		{
-			if(this.mp4)
+			//WebM is for people with principles, MP4 is for people who want results
+			if(this.mp4) 
 			{
 				loader.video(vidname, urlNoExtension + ".mp4");
 				return true;
