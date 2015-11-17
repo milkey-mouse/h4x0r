@@ -26,9 +26,9 @@ module Haxor
 			this.game.add.retroFont("console", 8, 12, Phaser.RetroFont.TEXT_SET1, 1);
 		}
 		
-		createColoredMap(r: number, g: number, b: number) : RetroFont
+		createColoredMap(r: number, g: number, b: number, br: number = null, bg:number = null, bb:number = null, ba:number = null) : RetroFont
 		{
-            this.original.replaceRGB(255,255,255,255,r,g,b,255);
+            return this.original.replaceRGB(255,255,255,255,r,g,b,255);
 		}
 	}
 }
