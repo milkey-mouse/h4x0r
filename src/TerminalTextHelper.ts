@@ -8,7 +8,12 @@ module Haxor
 		codeto: Object = {
 			"\x1b[39;49m":"gray", //default color
 			"\x1b[0m":"gray", //default everything, but only color is supported
-			
+			"\x1b[30m":"black",
+			"\x1b[31m":"red",
+			"\x1b[32m":"green",
+			"\x1b[33m":"yellow",
+			"\x1b[34m":"blue",
+			"\x1b[35m":"magenta",
 		}
 		
 		original: Phaser.BitmapData;
@@ -28,7 +33,14 @@ module Haxor
 		
 		createColoredMap(r: number, g: number, b: number, br: number = null, bg:number = null, bb:number = null, ba:number = null) : RetroFont
 		{
-            return this.original.replaceRGB(255,255,255,255,r,g,b,255);
+			if(br === null || bg === null || bb === null)
+			{
+                return this.original.replaceRGB(255,255,255,255,r,g,b,255);
+			}
+			else
+			{
+				return this.original.replaceRGB(255,255,255,255,r,g,b,255).replaceRGB(0,0,0,0,br,bg,bb,255);
+			}
 		}
 	}
 }
