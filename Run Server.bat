@@ -1,1 +1,1 @@
-http-server ./bin/
+http-server ./bin/ -p 80

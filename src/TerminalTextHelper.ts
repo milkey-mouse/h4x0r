@@ -80,7 +80,7 @@ module Haxor
         game: Phaser.Game;
         
         
-        constructor(game: Phaser.Game, bdata: Phaser.BitmapData)
+        constructor(game: Phaser.Game)
         {
             this.game = game;
             this.original = this.game.make.bitmapData().load("terminal");

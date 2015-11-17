@@ -184,66 +184,6 @@ var Haxor;
 /// <reference path="../tsDefinitions/phaser.d.ts" />
 var Haxor;
 (function (Haxor) {
-    var MainMenu = (function (_super) {
-        __extends(MainMenu, _super);
-        function MainMenu() {
-            _super.apply(this, arguments);
-        }
-        MainMenu.prototype.create = function () {
-            console.log("yo");
-            console.log(this.game.make.bitmapData().replaceRGB(255, 255, 255, 255, 255, 0, 0, 255));
-        };
-        MainMenu.prototype.update = function () {
-        };
-        return MainMenu;
-    })(Phaser.State);
-    Haxor.MainMenu = MainMenu;
-})(Haxor || (Haxor = {}));
-/// <reference path="../tsDefinitions/phaser.d.ts" />
-/// <reference path="Boot.ts" />
-/// <reference path="Mobile.ts" />
-/// <reference path="MainMenu.ts" />
-var Haxor;
-(function (Haxor) {
-    var Game = (function (_super) {
-        __extends(Game, _super);
-        function Game() {
-            _super.call(this, window.innerWidth, window.innerHeight, Phaser.CANVAS, 'content', null, false, false);
-            this.state.add('Boot', Haxor.Boot, false);
-            this.state.add('Mobile', Haxor.Mobile, false);
-            this.state.add('MainMenu', Haxor.MainMenu, false);
-            this.state.start('Boot');
-        }
-        Game.prototype.fixSize = function (event) {
-            var hgw = window;
-            var oldX = hgw.game.world.centerX;
-            var oldY = hgw.game.world.centerY;
-            hgw.game.scale.setGameSize(window.innerWidth, window.innerHeight);
-            var offX = hgw.game.world.centerX - oldX;
-            var offY = hgw.game.world.centerY - oldY;
-            hgw.game.world.forEach(function (obj) {
-                obj.x += offX;
-                obj.y += offY;
-            }, this);
-        };
-        return Game;
-    })(Phaser.Game);
-    Haxor.Game = Game;
-})(Haxor || (Haxor = {}));
-window.onload = function () {
-    var game = new Haxor.Game();
-    try {
-        window.addEventListener("resize", game.fixSize, false);
-    }
-    catch (e) {
-        window.onload = game.fixSize;
-        console.warn("overriding window.onload instead of addEventListener");
-    }
-    window.game = game;
-};
-/// <reference path="../tsDefinitions/phaser.d.ts" />
-var Haxor;
-(function (Haxor) {
     (function (TermColor) {
         TermColor[TermColor["BLACK"] = 0] = "BLACK";
         TermColor[TermColor["RED"] = 1] = "RED";
@@ -256,7 +196,7 @@ var Haxor;
     })(Haxor.TermColor || (Haxor.TermColor = {}));
     var TermColor = Haxor.TermColor;
     var TerminalTextHelper = (function () {
-        function TerminalTextHelper(game, bdata) {
+        function TerminalTextHelper(game) {
             this.colors = [
                 [0, 0, 0],
                 [0, 0, 1],
@@ -309,3 +249,69 @@ var Haxor;
     })();
     Haxor.TerminalTextHelper = TerminalTextHelper;
 })(Haxor || (Haxor = {}));
+/// <reference path="../tsDefinitions/phaser.d.ts" />
+/// <reference path="TerminalTextHelper.ts" />
+var Haxor;
+(function (Haxor) {
+    var MainMenu = (function (_super) {
+        __extends(MainMenu, _super);
+        function MainMenu() {
+            _super.apply(this, arguments);
+        }
+        MainMenu.prototype.create = function () {
+            this.tth = new Haxor.TerminalTextHelper(this.game);
+            console.log(this.game.cache.addImage("trem", null, this.game.make.image(0, 0, this.tth.colorizeMap(Haxor.TermColor.RED, 0, Haxor.TermColor.BLUE))));
+            var consoleFont = this.game.add.retroFont("trem", 8, 12, " !\"#$%&'()*+,-.\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{ | }~", 1, 0, 0);
+            consoleFont.autoUpperCase = false;
+            consoleFont.text = "Hello World!";
+            consoleFont.buildRetroFontText();
+            this.game.add.image(this.game.world.centerX, this.game.world.centerY, "trem");
+        };
+        MainMenu.prototype.update = function () {
+        };
+        return MainMenu;
+    })(Phaser.State);
+    Haxor.MainMenu = MainMenu;
+})(Haxor || (Haxor = {}));
+/// <reference path="../tsDefinitions/phaser.d.ts" />
+/// <reference path="Boot.ts" />
+/// <reference path="Mobile.ts" />
+/// <reference path="MainMenu.ts" />
+var Haxor;
+(function (Haxor) {
+    var Game = (function (_super) {
+        __extends(Game, _super);
+        function Game() {
+            _super.call(this, window.innerWidth, window.innerHeight, Phaser.CANVAS, 'content', null, false, false);
+            this.state.add('Boot', Haxor.Boot, false);
+            this.state.add('Mobile', Haxor.Mobile, false);
+            this.state.add('MainMenu', Haxor.MainMenu, false);
+            this.state.start('Boot');
+        }
+        Game.prototype.fixSize = function (event) {
+            var hgw = window;
+            var oldX = hgw.game.world.centerX;
+            var oldY = hgw.game.world.centerY;
+            hgw.game.scale.setGameSize(window.innerWidth, window.innerHeight);
+            var offX = hgw.game.world.centerX - oldX;
+            var offY = hgw.game.world.centerY - oldY;
+            hgw.game.world.forEach(function (obj) {
+                obj.x += offX;
+                obj.y += offY;
+            }, this);
+        };
+        return Game;
+    })(Phaser.Game);
+    Haxor.Game = Game;
+})(Haxor || (Haxor = {}));
+window.onload = function () {
+    var game = new Haxor.Game();
+    try {
+        window.addEventListener("resize", game.fixSize, false);
+    }
+    catch (e) {
+        window.onload = game.fixSize;
+        console.warn("overriding window.onload instead of addEventListener");
+    }
+    window.game = game;
+};
