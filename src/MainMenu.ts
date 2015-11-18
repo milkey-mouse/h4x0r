@@ -1,5 +1,6 @@
 /// <reference path="../tsDefinitions/phaser.d.ts" />
 /// <reference path="TerminalTextHelper.ts" />
+/// <reference path="BitmapEncoder.ts" />
 
 module Haxor
 {
@@ -10,14 +11,17 @@ module Haxor
 		create()
 		{
 			this.tth = new TerminalTextHelper(this.game);
-			this.game.make.image(0,0,"trem",0).loadTexture(this.tth.colorizeMap(TermColor.BLUE, Brightness.BRIGHT));
-			console.log(this.tth.colorizeMap(TermColor.BLUE, Brightness.BRIGHT).data);
-			var consoleFont: Phaser.RetroFont = this.game.add.retroFont("terminal", 8, 12, " !\"#$%&'()*+,-.\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{ | }~", 1, 0, 0);
+			var cmap: Phaser.BitmapData = this.tth.colorizeMap(TermColor.BLUE, Brightness.BRIGHT);
+			this.game.cache.addImage("trem", new BitmapEncoder().encodeBitmap(cmap.data, cmap.width, cmap.height), new Phaser.Image(this.game, 0,0,cmap,0));
+			console.log(this.game.cache.getImage("trem"));
+			this.game.load.start();
+			var consoleFont: Phaser.RetroFont = new Phaser.RetroFont(this.game, "trem", 8, 12, " !\"#$%&'()*+,-.\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{ | }~");
 			consoleFont.autoUpperCase = false;
+			consoleFont.key = "trem";
 			consoleFont.text = "Hello World!";
 			console.log(consoleFont);
 			consoleFont.buildRetroFontText();
-		    this.game.add.image(this.game.world.centerX, this.game.world.centerY, "trem");
+		    this.game.add.image(this.game.world.centerX, this.game.world.centerY, consoleFont);
 		}
 		
 		update()

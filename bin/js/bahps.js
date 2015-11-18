@@ -1,1 +1,0 @@
-window.bops = require("bops");

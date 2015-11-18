@@ -1,5 +1,79 @@
 var Haxor;
 (function (Haxor) {
+    var BitmapEncoder = (function () {
+        function BitmapEncoder() {
+        }
+        BitmapEncoder.prototype.encodeBitmap = function (arr, width, height) {
+            var buffer = arr;
+            var extraBytes = width % 4;
+            var rgbSize = height * (3 * width + extraBytes);
+            var headerInfoSize = 40;
+            var flag = "BM";
+            var reserved = 0;
+            var offset = 54;
+            var fileSize = rgbSize + offset;
+            var planes = 1;
+            var bitPP = 24;
+            var compress = 0;
+            var hr = 0;
+            var vr = 0;
+            var colors = 0;
+            var importantColors = 0;
+            var tempBuffer = window.bops.create(offset + rgbSize);
+            var pos = 0;
+            window.bops.copy(window.bops.from(flag), tempBuffer, 0, 0, 2);
+            pos += 2;
+            window.bops.writeUInt32LE(tempBuffer, fileSize, pos);
+            pos += 4;
+            window.bops.writeUInt32LE(tempBuffer, reserved, pos);
+            pos += 4;
+            window.bops.writeUInt32LE(tempBuffer, offset, pos);
+            pos += 4;
+            window.bops.writeUInt32LE(tempBuffer, headerInfoSize, pos);
+            pos += 4;
+            window.bops.writeUInt32LE(tempBuffer, width, pos);
+            pos += 4;
+            window.bops.writeUInt32LE(tempBuffer, height, pos);
+            pos += 4;
+            window.bops.writeUInt16LE(tempBuffer, planes, pos);
+            pos += 2;
+            window.bops.writeUInt16LE(tempBuffer, bitPP, pos);
+            pos += 2;
+            window.bops.writeUInt32LE(tempBuffer, compress, pos);
+            pos += 4;
+            window.bops.writeUInt32LE(tempBuffer, rgbSize, pos);
+            pos += 4;
+            window.bops.writeUInt32LE(tempBuffer, hr, pos);
+            pos += 4;
+            window.bops.writeUInt32LE(tempBuffer, vr, pos);
+            pos += 4;
+            window.bops.writeUInt32LE(tempBuffer, colors, pos);
+            pos += 4;
+            window.bops.writeUInt32LE(tempBuffer, importantColors, pos);
+            pos += 4;
+            var i = 0;
+            var rowBytes = 3 * width + extraBytes;
+            for (var y = height - 1; y >= 0; y--) {
+                for (var x = 0; x < width; x++) {
+                    var p = pos + y * rowBytes + x * 3;
+                    tempBuffer[p] = arr[i++];
+                    tempBuffer[p + 1] = arr[i++];
+                    tempBuffer[p + 2] = arr[i++];
+                    i++;
+                }
+                if (extraBytes > 0) {
+                    var fillOffset = pos + y * rowBytes + width * 3;
+                    tempBuffer.fill(0, fillOffset, fillOffset + extraBytes);
+                }
+            }
+            return "data:image/x-ms-bmp;base64," + window.bops.to(tempBuffer, "base64");
+        };
+        return BitmapEncoder;
+    })();
+    Haxor.BitmapEncoder = BitmapEncoder;
+})(Haxor || (Haxor = {}));
+var Haxor;
+(function (Haxor) {
     var CookieHelper = (function () {
         function CookieHelper() {
         }
@@ -251,6 +325,7 @@ var Haxor;
 })(Haxor || (Haxor = {}));
 /// <reference path="../tsDefinitions/phaser.d.ts" />
 /// <reference path="TerminalTextHelper.ts" />
+/// <reference path="BitmapEncoder.ts" />
 var Haxor;
 (function (Haxor) {
     var MainMenu = (function (_super) {
@@ -260,14 +335,17 @@ var Haxor;
         }
         MainMenu.prototype.create = function () {
             this.tth = new Haxor.TerminalTextHelper(this.game);
-            this.game.make.image(0, 0, "trem", 0).loadTexture(this.tth.colorizeMap(Haxor.TermColor.BLUE, 0));
-            console.log(this.tth.colorizeMap(Haxor.TermColor.BLUE, 0).data);
-            var consoleFont = this.game.add.retroFont("terminal", 8, 12, " !\"#$%&'()*+,-.\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{ | }~", 1, 0, 0);
+            var cmap = this.tth.colorizeMap(Haxor.TermColor.BLUE, 0);
+            this.game.cache.addImage("trem", new Haxor.BitmapEncoder().encodeBitmap(cmap.data, cmap.width, cmap.height), new Phaser.Image(this.game, 0, 0, cmap, 0));
+            console.log(this.game.cache.getImage("trem"));
+            this.game.load.start();
+            var consoleFont = this.game.add.retroFont("trem", 8, 12, " !\"#$%&'()*+,-.\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{ | }~", 1, 0, 0);
             consoleFont.autoUpperCase = false;
+            consoleFont.key = "trem";
             consoleFont.text = "Hello World!";
             console.log(consoleFont);
             consoleFont.buildRetroFontText();
-            this.game.add.image(this.game.world.centerX, this.game.world.centerY, "trem");
+            this.game.add.image(this.game.world.centerX, this.game.world.centerY, consoleFont);
         };
         MainMenu.prototype.update = function () {
         };

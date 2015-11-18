@@ -9,7 +9,7 @@ module Haxor
 			var rgbSize: number = height*(3*width+extraBytes);
 			var headerInfoSize: number = 40;
 			
-			var data: Array = [];
+			//var data: Array = [];
 			/**********header**********/
 			var flag: string = "BM";
 			var reserved: number = 0;
@@ -23,25 +23,25 @@ module Haxor
 			var colors: number = 0;
 			var importantColors: number = 0;
 			
-			var tempBuffer = new Buffer(offset+rgbSize);
+			var tempBuffer = window.bops.create(offset+rgbSize);
 			var pos: number = 0;
 			
-			tempBuffer.write(flag,pos,2);pos+=2;
-			tempBuffer.writeUInt32LE(fileSize,pos);pos+=4;
-			tempBuffer.writeUInt32LE(reserved,pos);pos+=4;
-			tempBuffer.writeUInt32LE(offset,pos);pos+=4;
+			window.bops.copy(window.bops.from(flag),tempBuffer,0,0,2);pos+=2;
+			window.bops.writeUInt32LE(tempBuffer,fileSize,pos);pos+=4;
+			window.bops.writeUInt32LE(tempBuffer,reserved,pos);pos+=4;
+			window.bops.writeUInt32LE(tempBuffer,offset,pos);pos+=4;
 		
-			tempBuffer.writeUInt32LE(headerInfoSize,pos);pos+=4;
-			tempBuffer.writeUInt32LE(width,pos);pos+=4;
-			tempBuffer.writeUInt32LE(height,pos);pos+=4;
-			tempBuffer.writeUInt16LE(planes,pos);pos+=2;
-			tempBuffer.writeUInt16LE(bitPP,pos);pos+=2;
-			tempBuffer.writeUInt32LE(compress,pos);pos+=4;
-			tempBuffer.writeUInt32LE(rgbSize,pos);pos+=4;
-			tempBuffer.writeUInt32LE(hr,pos);pos+=4;
-			tempBuffer.writeUInt32LE(vr,pos);pos+=4;
-			tempBuffer.writeUInt32LE(colors,pos);pos+=4;
-			tempBuffer.writeUInt32LE(importantColors,pos);pos+=4;
+			window.bops.writeUInt32LE(tempBuffer,headerInfoSize,pos);pos+=4;
+			window.bops.writeUInt32LE(tempBuffer,width,pos);pos+=4;
+			window.bops.writeUInt32LE(tempBuffer,height,pos);pos+=4;
+			window.bops.writeUInt16LE(tempBuffer,planes,pos);pos+=2;
+			window.bops.writeUInt16LE(tempBuffer,bitPP,pos);pos+=2;
+			window.bops.writeUInt32LE(tempBuffer,compress,pos);pos+=4;
+			window.bops.writeUInt32LE(tempBuffer,rgbSize,pos);pos+=4;
+			window.bops.writeUInt32LE(tempBuffer,hr,pos);pos+=4;
+			window.bops.writeUInt32LE(tempBuffer,vr,pos);pos+=4;
+			window.bops.writeUInt32LE(tempBuffer,colors,pos);pos+=4;
+			window.bops.writeUInt32LE(tempBuffer,importantColors,pos);pos+=4;
 		
 			var i=0;
 			var rowBytes = 3*width+extraBytes;
@@ -49,9 +49,9 @@ module Haxor
 			for (var y = height - 1; y >= 0; y--){
 				for (var x = 0; x < width; x++){
 					var p = pos+y*rowBytes+x*3;
-					tempBuffer[p+2]= buffer[i++];//r
-					tempBuffer[p+1] = buffer[i++];//g
-					tempBuffer[p]  = buffer[i++];//b
+					tempBuffer[p]   = arr[i++];//r
+					tempBuffer[p+1] = arr[i++];//g
+					tempBuffer[p+2] = arr[i++];//b
 					i++;
 				}
 				if(extraBytes>0){
@@ -60,7 +60,7 @@ module Haxor
 				}
 			}
 		
-			return tempBuffer;
+			return "data:image/x-ms-bmp;base64," + window.bops.to(tempBuffer, "base64");
 		}
 	}
 }
