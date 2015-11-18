@@ -260,10 +260,12 @@ var Haxor;
         }
         MainMenu.prototype.create = function () {
             this.tth = new Haxor.TerminalTextHelper(this.game);
-            console.log(this.game.cache.addImage("trem", null, this.game.make.image(0, 0, this.tth.colorizeMap(Haxor.TermColor.RED, 0, Haxor.TermColor.BLUE))));
-            var consoleFont = this.game.add.retroFont("trem", 8, 12, " !\"#$%&'()*+,-.\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{ | }~", 1, 0, 0);
+            this.game.make.image(0, 0, "trem", 0).loadTexture(this.tth.colorizeMap(Haxor.TermColor.BLUE, 0));
+            console.log(this.tth.colorizeMap(Haxor.TermColor.BLUE, 0).data);
+            var consoleFont = this.game.add.retroFont("terminal", 8, 12, " !\"#$%&'()*+,-.\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{ | }~", 1, 0, 0);
             consoleFont.autoUpperCase = false;
             consoleFont.text = "Hello World!";
+            console.log(consoleFont);
             consoleFont.buildRetroFontText();
             this.game.add.image(this.game.world.centerX, this.game.world.centerY, "trem");
         };
