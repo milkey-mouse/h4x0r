@@ -256,6 +256,7 @@ var Haxor;
     Haxor.Mobile = Mobile;
 })(Haxor || (Haxor = {}));
 /// <reference path="../tsDefinitions/phaser.d.ts" />
+/// <reference path="BitmapEncoder.ts" />
 var Haxor;
 (function (Haxor) {
     (function (TermColor) {
@@ -281,6 +282,7 @@ var Haxor;
                 [1, 0.5, 0],
                 [1, 1, 1],
             ];
+            this.lastRequestedName = null;
             this.game = game;
             this.original = this.game.make.bitmapData().load("terminal");
         }
@@ -308,6 +310,24 @@ var Haxor;
             var backcolor = this.brightenize(this.colors[background], backBrightness);
             return this.createColoredMap(forecolor[0], forecolor[1], forecolor[2], backcolor[0], backcolor[1], backcolor[2]);
         };
+        TerminalTextHelper.prototype.createMapAsync = function (callback, callbackContext, foreground, foreBrightness, background, backBrightness) {
+            if (background === void 0) { background = null; }
+            if (backBrightness === void 0) { backBrightness = 1; }
+            this.lastRequestedName = "term_" + foreground.toString() + foreBrightness.toString() + (background === null ? "" : background.toString()) + (backBrightness === null ? "" : backBrightness.toString());
+            if (this.game.cache.checkImageKey(this.lastRequestedName)) {
+                callback();
+                return true;
+            }
+            var cmap = this.colorizeMap(TermColor.BLUE, 0);
+            this.game.load.image(this.lastRequestedName, new Haxor.BitmapEncoder().encodeBitmap(cmap.data, cmap.width, cmap.height));
+            if (callback === null) {
+                this.game.load.onFileComplete.addOnce(callback, callbackContext);
+            }
+            this.game.load.start();
+            console.log(this.game.load);
+            console.log(this.lastRequestedName);
+            console.log(new Haxor.BitmapEncoder().encodeBitmap(cmap.data, cmap.width, cmap.height));
+        };
         TerminalTextHelper.prototype.createColoredMap = function (r, g, b, br, bg, bb) {
             if (br === void 0) { br = null; }
             if (bg === void 0) { bg = null; }
@@ -325,7 +345,6 @@ var Haxor;
 })(Haxor || (Haxor = {}));
 /// <reference path="../tsDefinitions/phaser.d.ts" />
 /// <reference path="TerminalTextHelper.ts" />
-/// <reference path="BitmapEncoder.ts" />
 var Haxor;
 (function (Haxor) {
     var MainMenu = (function (_super) {
@@ -335,16 +354,14 @@ var Haxor;
         }
         MainMenu.prototype.create = function () {
             this.tth = new Haxor.TerminalTextHelper(this.game);
-            var cmap = this.tth.colorizeMap(Haxor.TermColor.BLUE, 0);
-            this.game.cache.addImage("trem", new Haxor.BitmapEncoder().encodeBitmap(cmap.data, cmap.width, cmap.height), new Phaser.Image(this.game, 0, 0, cmap, 0));
-            console.log(this.game.cache.getImage("trem"));
-            this.game.load.start();
-            var consoleFont = this.game.add.retroFont("trem", 8, 12, " !\"#$%&'()*+,-.\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{ | }~", 1, 0, 0);
+            this.tth.createMapAsync(this.reafy, this, Haxor.TermColor.RED, 0, Haxor.TermColor.BLUE, 1);
+        };
+        MainMenu.prototype.reafy = function () {
+            var consoleFont = this.game.make.retroFont(this.tth.lastRequestedName, 8, 12, this.game.cache.getText("charmap"), 1);
             consoleFont.autoUpperCase = false;
-            consoleFont.key = "trem";
+            consoleFont.multiLine = true;
             consoleFont.text = "Hello World!";
             console.log(consoleFont);
-            consoleFont.buildRetroFontText();
             this.game.add.image(this.game.world.centerX, this.game.world.centerY, consoleFont);
         };
         MainMenu.prototype.update = function () {

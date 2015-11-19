@@ -16,12 +16,9 @@
             "url": "fonts/terminal.png"
         },
         {
-            "type": "retroFont",
-            "key": "console",
-            "characterWidth": 8,
-            "characterHeight": 12,
-            "chars": " !\"#$%&'()*+,-.\/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{ | }~",
-            "charsPerRow": 1
+            "type": "text",
+            "key": "charmap",
+            "url": "fonts/terminal.txt"
         }
     ]
 }

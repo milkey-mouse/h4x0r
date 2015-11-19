@@ -1,4 +1,5 @@
 /// <reference path="../tsDefinitions/phaser.d.ts" />
+/// <reference path="BitmapEncoder.ts" />
 
 module Haxor
 {
@@ -75,6 +76,31 @@ module Haxor
             var backcolor : Array<number> = this.brightenize(this.colors[background], backBrightness);
             return this.createColoredMap(forecolor[0],forecolor[1],forecolor[2],backcolor[0],backcolor[1],backcolor[2]);
         }
+        
+        lastRequestedName: string = null;
+        
+        createMapAsync(callback: Function, callbackContext: any, foreground: TermColor, foreBrightness: Brightness, background: TermColor = null, backBrightness: Brightness = Brightness.NORMAL)
+        {
+            this.lastRequestedName = "term_" + foreground.toString() + foreBrightness.toString() + (background === null ? "" : background.toString()) + (backBrightness === null ? "" : backBrightness.toString());
+            if(this.game.cache.checkImageKey(this.lastRequestedName))
+            {
+                callback();
+                return true;
+            }
+            var cmap: Phaser.BitmapData = this.colorizeMap(TermColor.BLUE, Brightness.BRIGHT);
+            this.game.load.image(this.lastRequestedName, new BitmapEncoder().encodeBitmap(cmap.data, cmap.width, cmap.height));
+            if(callback === null) //dunno why, but whatever
+            {
+                this.game.load.onFileComplete.addOnce(callback, callbackContext);
+            }
+            this.game.load.start();
+            while(this.game.load.isLoading);
+            callbackContext.callback();
+            console.log(this.game.load);
+            console.log(this.lastRequestedName);
+            console.log(new BitmapEncoder().encodeBitmap(cmap.data, cmap.width, cmap.height));
+        }
+            
         
         original: Phaser.BitmapData;
         game: Phaser.Game;
