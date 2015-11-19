@@ -86,8 +86,6 @@ module Haxor
 			{
 				window.charmap = this.game.cache.getText("charmap");
 				window.tth = new TerminalTextHelper(this.game);
-				window.tth.createMapAsync(null, null, TermColor.WHITE, Brightness.NORMAL);
-				window.tth.createMapAsync(null, null, TermColor.GRAY, Brightness.NORMAL);
 				this.loadvid.stop();
 				this.loadvid.destroy();
 				this.game.state.start("MainMenu", true, false);

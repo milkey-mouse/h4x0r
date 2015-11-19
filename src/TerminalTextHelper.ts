@@ -46,7 +46,7 @@ module Haxor
                 [1,   0,   0],
                 [1,   0,   1],
                 [1,   0.5, 0],
-                [1,   1,   1],
+                [1.5,   1.5,   1.5],
                 [0.5, 0.5, 0.5],
         ];
         
@@ -120,6 +120,7 @@ module Haxor
         {
             this.game = game;
             this.original = this.game.make.bitmapData().load("terminal");
+            this.original.smoothed = false;
         }
         
         createColoredMap(r: number, g: number, b: number, br: number = null, bg:number = null, bb:number = null) : Phaser.BitmapData

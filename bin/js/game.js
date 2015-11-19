@@ -219,8 +219,6 @@ var Haxor;
             if (this.complete == 2) {
                 window.charmap = this.game.cache.getText("charmap");
                 window.tth = new Haxor.TerminalTextHelper(this.game);
-                window.tth.createMapAsync(null, null, Haxor.TermColor.WHITE, 1);
-                window.tth.createMapAsync(null, null, Haxor.TermColor.GRAY, 1);
                 this.loadvid.stop();
                 this.loadvid.destroy();
                 this.game.state.start("MainMenu", true, false);
@@ -285,7 +283,7 @@ var Haxor;
                 [1, 0, 0],
                 [1, 0, 1],
                 [1, 0.5, 0],
-                [1, 1, 1],
+                [1.5, 1.5, 1.5],
                 [0.5, 0.5, 0.5],
             ];
             this.lastRequestedName = null;
@@ -293,6 +291,7 @@ var Haxor;
             this.lastContext = null;
             this.game = game;
             this.original = this.game.make.bitmapData().load("terminal");
+            this.original.smoothed = false;
         }
         TerminalTextHelper.prototype.brightenize = function (color, brightness) {
             var newcolor = new Array(color.length);
@@ -369,10 +368,11 @@ var Haxor;
             _super.apply(this, arguments);
         }
         MainMenu.prototype.create = function () {
-            window.tth.createMapAsync(this.reafy, this, Haxor.TermColor.BLUE, 1);
+            window.tth.createMapAsync(this.reafy, this, Haxor.TermColor.CYAN, 0);
         };
         MainMenu.prototype.reafy = function (consoleFont) {
-            consoleFont.text = "Hello World!";
+            consoleFont.text = window.charmap;
+            consoleFont.smoothed = "false";
             this.game.add.image(this.game.world.centerX, this.game.world.centerY, consoleFont).smoothed = false;
         };
         MainMenu.prototype.update = function () {

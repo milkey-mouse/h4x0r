@@ -9,12 +9,13 @@ module Haxor
 	{
 		create()
 		{
-            window.tth.createMapAsync(this.reafy, this, TermColor.BLUE, Brightness.NORMAL);
+            window.tth.createMapAsync(this.reafy, this, TermColor.CYAN, Brightness.BRIGHT);
 		}
         
         reafy(consoleFont: Phaser.RetroFont)
         {
-			consoleFont.text = "Hello World!";
+			consoleFont.text = window.charmap;
+			consoleFont.smoothed = "false";
 		    this.game.add.image(this.game.world.centerX, this.game.world.centerY, consoleFont).smoothed = false;
         }
 		

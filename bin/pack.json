@@ -8,7 +8,8 @@
         {
             "type": "image",
             "key": "logo",
-            "url": "assets/logo.png"
+            "url": "assets/logo.png",
+            "smoothed": false
         },
         {
             "type": "image",
