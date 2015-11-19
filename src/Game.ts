@@ -4,10 +4,17 @@
 /// <reference path="MainMenu.ts" />
 
 module Haxor
-{
+{   
+    declare var window: Haxor.GameWindow;
+    
     export interface GameWindow extends Window
     {
         game: Haxor.Game;
+        charmap: string;
+        tth: TerminalTextHelper;
+        //external stuff
+        bops: any;
+        WebFontConfig: any;
     }
     
 	export class Game extends Phaser.Game
@@ -25,13 +32,12 @@ module Haxor
         
         fixSize(event)
         {
-            var hgw = (<Haxor.GameWindow>window);
-            var oldX = hgw.game.world.centerX;
-            var oldY = hgw.game.world.centerY;
-            hgw.game.scale.setGameSize(window.innerWidth, window.innerHeight);
-            var offX = hgw.game.world.centerX - oldX;
-            var offY = hgw.game.world.centerY - oldY;
-            hgw.game.world.forEach(function(obj)
+            var oldX = window.game.world.centerX;
+            var oldY = window.game.world.centerY;
+            window.game.scale.setGameSize(window.innerWidth, window.innerHeight);
+            var offX = window.game.world.centerX - oldX;
+            var offY = window.game.world.centerY - oldY;
+            window.game.world.forEach(function(obj)
                 {
                     obj.x += offX;
                     obj.y += offY;

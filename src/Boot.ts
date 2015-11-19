@@ -3,7 +3,9 @@
 /// <reference path="VideoLoad.ts" />
 
 module Haxor
-{
+{	
+	declare var window: Haxor.GameWindow;
+	
 	export class Boot extends Phaser.State
 	{
 		vload : VideoLoad = new VideoLoad();
@@ -47,8 +49,8 @@ module Haxor
 			this.scale.forceLandscape = true;
 			
 			//google webfonts stuff
-			window["WebFontConfig"] = {};
-            window["WebFontConfig"].google = { families: ['Inconsolata:latin','Open Sans:latin'] };
+			window.WebFontConfig = {};
+            window.WebFontConfig.google = { families: ['Inconsolata:latin','Open Sans:latin'] };
 			
 			this.otherloader = new Phaser.Loader(this.game);
 			this.otherloader.pack("main", "pack.json");
@@ -82,6 +84,10 @@ module Haxor
 			this.complete += 1;
 			if(this.complete == 2)
 			{
+				window.charmap = this.game.cache.getText("charmap");
+				window.tth = new TerminalTextHelper(this.game);
+				window.tth.createMapAsync(null, null, TermColor.WHITE, Brightness.NORMAL);
+				window.tth.createMapAsync(null, null, TermColor.GRAY, Brightness.NORMAL);
 				this.loadvid.stop();
 				this.loadvid.destroy();
 				this.game.state.start("MainMenu", true, false);

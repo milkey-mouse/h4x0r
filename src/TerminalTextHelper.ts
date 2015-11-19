@@ -3,6 +3,8 @@
 
 module Haxor
 {
+    declare var window: Haxor.GameWindow;
+    
     //thanks @atdt https://github.com/atdt/escapes.js
     
     export enum TermColor
@@ -15,6 +17,7 @@ module Haxor
         MAGENTA = 5,
         CYAN    = 6,
         WHITE   = 7,
+        GRAY    = 8
     }
     
     export const enum Escapes
@@ -36,14 +39,15 @@ module Haxor
     export class TerminalTextHelper
     {
         colors: Array<Array<number>> = [
-                [0,  0,   0],
-                [0,  0,   1],
-                [0,  1,   0],
-                [0,  1,   1],
-                [1,  0,   0],
-                [1,  0,   1],
-                [1,  0.5, 0],
-                [1,  1,   1],
+                [0,   0,   0],
+                [0,   0,   1],
+                [0,   1,   0],
+                [0,   1,   1],
+                [1,   0,   0],
+                [1,   0,   1],
+                [1,   0.5, 0],
+                [1,   1,   1],
+                [0.5, 0.5, 0.5],
         ];
         
         brightenize(color: Array<number>, brightness: Brightness) //"brightenize" is perfectly cromulent if you ask me
@@ -79,26 +83,32 @@ module Haxor
         
         lastRequestedName: string = null;
         
+        private lastCallback: Function = null;
+        
+        private lastContext: any = null;
+        
+        callback()
+        {
+            var consoleFont: Phaser.RetroFont = this.game.make.retroFont(this.lastRequestedName, 8, 12, window.charmap, 1);
+			consoleFont.autoUpperCase = false;
+            consoleFont.multiLine = true;
+            this.lastCallback.call(this.lastContext, consoleFont);
+        }
+        
         createMapAsync(callback: Function, callbackContext: any, foreground: TermColor, foreBrightness: Brightness, background: TermColor = null, backBrightness: Brightness = Brightness.NORMAL)
         {
             this.lastRequestedName = "term_" + foreground.toString() + foreBrightness.toString() + (background === null ? "" : background.toString()) + (backBrightness === null ? "" : backBrightness.toString());
+            this.lastCallback = callback;
+            this.lastContext = callbackContext;
             if(this.game.cache.checkImageKey(this.lastRequestedName))
             {
-                callback();
+                if(callback!==null){this.callback();}
                 return true;
             }
-            var cmap: Phaser.BitmapData = this.colorizeMap(TermColor.BLUE, Brightness.BRIGHT);
+            var cmap: Phaser.BitmapData = this.colorizeMap(foreground, foreBrightness, background, backBrightness);
             this.game.load.image(this.lastRequestedName, new BitmapEncoder().encodeBitmap(cmap.data, cmap.width, cmap.height));
-            if(callback === null) //dunno why, but whatever
-            {
-                this.game.load.onFileComplete.addOnce(callback, callbackContext);
-            }
+            if(callback!==null){this.game.load.onFileComplete.addOnce(this.callback, this)};
             this.game.load.start();
-            while(this.game.load.isLoading);
-            callbackContext.callback();
-            console.log(this.game.load);
-            console.log(this.lastRequestedName);
-            console.log(new BitmapEncoder().encodeBitmap(cmap.data, cmap.width, cmap.height));
         }
             
         

@@ -193,8 +193,8 @@ var Haxor;
             this.stage.smoothed = false;
             this.stage.setBackgroundColor(0x000000);
             this.scale.forceLandscape = true;
-            window["WebFontConfig"] = {};
-            window["WebFontConfig"].google = { families: ['Inconsolata:latin', 'Open Sans:latin'] };
+            window.WebFontConfig = {};
+            window.WebFontConfig.google = { families: ['Inconsolata:latin', 'Open Sans:latin'] };
             this.otherloader = new Phaser.Loader(this.game);
             this.otherloader.pack("main", "pack.json");
             this.otherloader.onLoadComplete.add(this.addSkipButton, this);
@@ -217,6 +217,10 @@ var Haxor;
         Boot.prototype.actionComplete = function () {
             this.complete += 1;
             if (this.complete == 2) {
+                window.charmap = this.game.cache.getText("charmap");
+                window.tth = new Haxor.TerminalTextHelper(this.game);
+                window.tth.createMapAsync(null, null, Haxor.TermColor.WHITE, 1);
+                window.tth.createMapAsync(null, null, Haxor.TermColor.GRAY, 1);
                 this.loadvid.stop();
                 this.loadvid.destroy();
                 this.game.state.start("MainMenu", true, false);
@@ -268,6 +272,7 @@ var Haxor;
         TermColor[TermColor["MAGENTA"] = 5] = "MAGENTA";
         TermColor[TermColor["CYAN"] = 6] = "CYAN";
         TermColor[TermColor["WHITE"] = 7] = "WHITE";
+        TermColor[TermColor["GRAY"] = 8] = "GRAY";
     })(Haxor.TermColor || (Haxor.TermColor = {}));
     var TermColor = Haxor.TermColor;
     var TerminalTextHelper = (function () {
@@ -281,8 +286,11 @@ var Haxor;
                 [1, 0, 1],
                 [1, 0.5, 0],
                 [1, 1, 1],
+                [0.5, 0.5, 0.5],
             ];
             this.lastRequestedName = null;
+            this.lastCallback = null;
+            this.lastContext = null;
             this.game = game;
             this.original = this.game.make.bitmapData().load("terminal");
         }
@@ -310,23 +318,31 @@ var Haxor;
             var backcolor = this.brightenize(this.colors[background], backBrightness);
             return this.createColoredMap(forecolor[0], forecolor[1], forecolor[2], backcolor[0], backcolor[1], backcolor[2]);
         };
+        TerminalTextHelper.prototype.callback = function () {
+            var consoleFont = this.game.make.retroFont(this.lastRequestedName, 8, 12, window.charmap, 1);
+            consoleFont.autoUpperCase = false;
+            consoleFont.multiLine = true;
+            this.lastCallback.call(this.lastContext, consoleFont);
+        };
         TerminalTextHelper.prototype.createMapAsync = function (callback, callbackContext, foreground, foreBrightness, background, backBrightness) {
             if (background === void 0) { background = null; }
             if (backBrightness === void 0) { backBrightness = 1; }
             this.lastRequestedName = "term_" + foreground.toString() + foreBrightness.toString() + (background === null ? "" : background.toString()) + (backBrightness === null ? "" : backBrightness.toString());
+            this.lastCallback = callback;
+            this.lastContext = callbackContext;
             if (this.game.cache.checkImageKey(this.lastRequestedName)) {
-                callback();
+                if (callback !== null) {
+                    this.callback();
+                }
                 return true;
             }
-            var cmap = this.colorizeMap(TermColor.BLUE, 0);
+            var cmap = this.colorizeMap(foreground, foreBrightness, background, backBrightness);
             this.game.load.image(this.lastRequestedName, new Haxor.BitmapEncoder().encodeBitmap(cmap.data, cmap.width, cmap.height));
-            if (callback === null) {
-                this.game.load.onFileComplete.addOnce(callback, callbackContext);
+            if (callback !== null) {
+                this.game.load.onFileComplete.addOnce(this.callback, this);
             }
+            ;
             this.game.load.start();
-            console.log(this.game.load);
-            console.log(this.lastRequestedName);
-            console.log(new Haxor.BitmapEncoder().encodeBitmap(cmap.data, cmap.width, cmap.height));
         };
         TerminalTextHelper.prototype.createColoredMap = function (r, g, b, br, bg, bb) {
             if (br === void 0) { br = null; }
@@ -353,16 +369,11 @@ var Haxor;
             _super.apply(this, arguments);
         }
         MainMenu.prototype.create = function () {
-            this.tth = new Haxor.TerminalTextHelper(this.game);
-            this.tth.createMapAsync(this.reafy, this, Haxor.TermColor.RED, 0, Haxor.TermColor.BLUE, 1);
+            window.tth.createMapAsync(this.reafy, this, Haxor.TermColor.BLUE, 1);
         };
-        MainMenu.prototype.reafy = function () {
-            var consoleFont = this.game.make.retroFont(this.tth.lastRequestedName, 8, 12, this.game.cache.getText("charmap"), 1);
-            consoleFont.autoUpperCase = false;
-            consoleFont.multiLine = true;
+        MainMenu.prototype.reafy = function (consoleFont) {
             consoleFont.text = "Hello World!";
-            console.log(consoleFont);
-            this.game.add.image(this.game.world.centerX, this.game.world.centerY, consoleFont);
+            this.game.add.image(this.game.world.centerX, this.game.world.centerY, consoleFont).smoothed = false;
         };
         MainMenu.prototype.update = function () {
         };
@@ -386,13 +397,12 @@ var Haxor;
             this.state.start('Boot');
         }
         Game.prototype.fixSize = function (event) {
-            var hgw = window;
-            var oldX = hgw.game.world.centerX;
-            var oldY = hgw.game.world.centerY;
-            hgw.game.scale.setGameSize(window.innerWidth, window.innerHeight);
-            var offX = hgw.game.world.centerX - oldX;
-            var offY = hgw.game.world.centerY - oldY;
-            hgw.game.world.forEach(function (obj) {
+            var oldX = window.game.world.centerX;
+            var oldY = window.game.world.centerY;
+            window.game.scale.setGameSize(window.innerWidth, window.innerHeight);
+            var offX = window.game.world.centerX - oldX;
+            var offY = window.game.world.centerY - oldY;
+            window.game.world.forEach(function (obj) {
                 obj.x += offX;
                 obj.y += offY;
             }, this);

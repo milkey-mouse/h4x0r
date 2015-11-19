@@ -13,7 +13,8 @@
         {
             "type": "image",
             "key": "terminal",
-            "url": "fonts/terminal.png"
+            "url": "fonts/terminal.png",
+            "smoothed": false
         },
         {
             "type": "text",

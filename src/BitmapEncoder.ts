@@ -1,5 +1,7 @@
 module Haxor
-{
+{	
+	declare var window: Haxor.GameWindow;
+	
 	export class BitmapEncoder //adapted from https://github.com/shaozilee/bmp-js
 	{
 		encodeBitmap(arr: Uint8Array, width: number, height: number)
