@@ -1,5 +1,5 @@
 /// <reference path="../tsDefinitions/phaser.d.ts" />
-/// <reference path="TerminalTextHelper.ts" />
+/// <reference path="text/TerminalTextHelper.ts" />
 
 module Haxor
 {

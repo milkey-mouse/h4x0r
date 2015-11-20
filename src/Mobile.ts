@@ -1,5 +1,5 @@
 /// <reference path="../tsDefinitions/phaser.d.ts" />
-/// <reference path="CookieHelper.ts" />
+/// <reference path="helpers/CookieHelper.ts" />
 
 module Haxor
 {

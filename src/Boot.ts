@@ -1,6 +1,6 @@
 /// <reference path="../tsDefinitions/phaser.d.ts" />
-/// <reference path="CookieHelper.ts" />
-/// <reference path="VideoLoad.ts" />
+/// <reference path="helpers/CookieHelper.ts" />
+/// <reference path="helpers/VideoLoad.ts" />
 
 module Haxor
 {	
