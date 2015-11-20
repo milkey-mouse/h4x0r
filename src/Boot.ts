@@ -8,9 +8,11 @@ module Haxor
 	
 	export class Boot extends Phaser.State
 	{
-		vload : VideoLoad = new VideoLoad();
+		vload: VideoLoad = new VideoLoad();
+        
+        aload: AudioLoad = new AudioLoad();
 		
-		loadvid : Phaser.Video;
+		loadvid: Phaser.Video;
 		
 		preload()
 		{
@@ -29,9 +31,9 @@ module Haxor
 		
 		complete = 0;
 		
-		otherloader : Phaser.Loader;
+		otherloader: Phaser.Loader;
 		
-		skip : Phaser.Button;
+		skip: Phaser.Button;
 		
 		create()
 		{
@@ -54,6 +56,7 @@ module Haxor
 			
 			this.otherloader = new Phaser.Loader(this.game);
 			this.otherloader.pack("main", "pack.json");
+            this.aload.getAudioPack(this.otherloader);
 			this.otherloader.onLoadComplete.add(this.addSkipButton, this);
 			this.otherloader.onLoadComplete.add(this.actionComplete, this);
 			this.otherloader.start();

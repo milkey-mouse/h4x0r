@@ -52,7 +52,7 @@ module Haxor
         
         brightenize(color: Array<number>, brightness: Brightness) //"brightenize" is perfectly cromulent if you ask me
         {
-            var newcolor : Array<number> = new Array<number>(color.length)
+            var newcolor: Array<number> = new Array<number>(color.length)
             if(brightness === Brightness.BRIGHT)
             {
                 for(var i=0; i<color.length; i++)
@@ -72,12 +72,12 @@ module Haxor
         
         colorizeMap(foreground: TermColor, foreBrightness: Brightness, background: TermColor = null, backBrightness: Brightness = Brightness.NORMAL)
         {
-            var forecolor : Array<number> = this.brightenize(this.colors[foreground], foreBrightness);
+            var forecolor: Array<number> = this.brightenize(this.colors[foreground], foreBrightness);
             if(background === null)
             {
                 return this.createColoredMap(forecolor[0],forecolor[1],forecolor[2]);
             }
-            var backcolor : Array<number> = this.brightenize(this.colors[background], backBrightness);
+            var backcolor: Array<number> = this.brightenize(this.colors[background], backBrightness);
             return this.createColoredMap(forecolor[0],forecolor[1],forecolor[2],backcolor[0],backcolor[1],backcolor[2]);
         }
         
@@ -92,6 +92,7 @@ module Haxor
             var consoleFont: Phaser.RetroFont = this.game.make.retroFont(this.lastRequestedName, 8, 12, window.charmap, 1);
 			consoleFont.autoUpperCase = false;
             consoleFont.multiLine = true;
+            consoleFont.align = Phaser.RetroFont.ALIGN_LEFT;
             this.lastCallback.call(this.lastContext, consoleFont);
         }
         
@@ -123,7 +124,7 @@ module Haxor
             this.original.smoothed = false;
         }
         
-        createColoredMap(r: number, g: number, b: number, br: number = null, bg:number = null, bb:number = null) : Phaser.BitmapData
+        createColoredMap(r: number, g: number, b: number, br: number = null, bg:number = null, bb:number = null): Phaser.BitmapData
         {
             if(br === null || bg === null || bb === null)
             {

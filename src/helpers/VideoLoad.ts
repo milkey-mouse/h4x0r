@@ -4,7 +4,7 @@ module Haxor
 	{
 		canPlay(type: string, testEl: HTMLVideoElement) : boolean
 		{
-			var result : boolean = false;
+			var result: boolean = false;
 			switch(type)
 			{
 				case "mp4":
@@ -49,7 +49,7 @@ module Haxor
 		
 		constructor()
 		{
-			var testEl : HTMLVideoElement = document.createElement("video");
+			var testEl: HTMLVideoElement = document.createElement("video");
 			this.mp4 = this.canPlay("mp4", testEl);
 			this.webm = this.canPlay("webm", testEl);
 			this.ogg = this.canPlay("ogg", testEl);

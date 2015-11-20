@@ -320,6 +320,7 @@ var Haxor;
             var consoleFont = this.game.make.retroFont(this.lastRequestedName, 8, 12, window.charmap, 1);
             consoleFont.autoUpperCase = false;
             consoleFont.multiLine = true;
+            consoleFont.align = Phaser.RetroFont.ALIGN_LEFT;
             this.lastCallback.call(this.lastContext, consoleFont);
         };
         TerminalTextHelper.prototype.createMapAsync = function (callback, callbackContext, foreground, foreBrightness, background, backBrightness) {
@@ -367,12 +368,16 @@ var Haxor;
             _super.apply(this, arguments);
         }
         MainMenu.prototype.create = function () {
-            window.tth.createMapAsync(this.reafy, this, Haxor.TermColor.CYAN, 0);
+            this.logo = null;
+            window.tth.createMapAsync(this.reafy, this, Haxor.TermColor.WHITE, 0);
         };
         MainMenu.prototype.reafy = function (consoleFont) {
-            consoleFont.text = window.charmap;
-            consoleFont.smoothed = "false";
-            this.game.add.image(this.game.world.centerX, this.game.world.centerY, consoleFont).smoothed = false;
+            consoleFont.text = "H4X0R";
+            this.logo = this.game.add.image(this.game.world.centerX, this.game.world.centerY, consoleFont);
+            this.logo.smoothed = false;
+            this.logo.scale = new Phaser.Point(7, 7);
+            var bounds = this.logo.getBounds();
+            this.logo.position = new Phaser.Point(this.game.world.centerX - (bounds.width * 3.5), this.game.world.centerY - (bounds.height * 3.5));
         };
         MainMenu.prototype.update = function () {
         };

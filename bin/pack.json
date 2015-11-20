@@ -7,12 +7,6 @@
         },
         {
             "type": "image",
-            "key": "logo",
-            "url": "assets/logo.png",
-            "smoothed": false
-        },
-        {
-            "type": "image",
             "key": "terminal",
             "url": "fonts/terminal.png",
             "smoothed": false
