@@ -11,7 +11,6 @@ module Haxor
         
 		create()
 		{
-            this.logo = null;
             window.tth.createMapAsync(this.reafy, this, TermColor.WHITE, Brightness.BRIGHT);
 		}
         
@@ -20,9 +19,11 @@ module Haxor
             consoleFont.text = "H4X0R";
 		    this.logo = this.game.add.image(this.game.world.centerX, this.game.world.centerY, consoleFont);
             this.logo.smoothed = false;
-            this.logo.scale = new Phaser.Point(7,7);
+            this.logo.scale = new Phaser.Point(6.5,6.5);
             var bounds: PIXI.Rectangle = this.logo.getBounds();
-            this.logo.position = new Phaser.Point(this.game.world.centerX-(bounds.width*3.5),this.game.world.centerY-(bounds.height*3.5));
+            this.logo.position = new Phaser.Point(this.game.world.centerX-(bounds.width*3.25),this.game.world.centerY-(bounds.height*3.25));
+            this.game.sound.play("complab", 0.5, true);
+            this.game.sound.play("typing", 1, true);
         }
 		
 		update()

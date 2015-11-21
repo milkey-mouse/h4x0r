@@ -97,6 +97,7 @@ var Haxor;
         function Boot() {
             _super.apply(this, arguments);
             this.vload = new Haxor.VideoLoad();
+            this.aload = new Haxor.AudioLoad();
             this.complete = 0;
         }
         Boot.prototype.preload = function () {
@@ -120,11 +121,14 @@ var Haxor;
             this.scale.forceLandscape = true;
             window.WebFontConfig = {};
             window.WebFontConfig.google = { families: ['Inconsolata:latin', 'Open Sans:latin'] };
+            var aloader = new Phaser.Loader(this.game);
+            aloader.text("audiolist", "audio.txt");
+            aloader.onLoadComplete.add(this.loadAudio, this);
+            aloader.start();
             this.otherloader = new Phaser.Loader(this.game);
             this.otherloader.pack("main", "pack.json");
             this.otherloader.onLoadComplete.add(this.addSkipButton, this);
             this.otherloader.onLoadComplete.add(this.actionComplete, this);
-            this.otherloader.start();
             this.loadvid = this.game.add.video("intro");
             this.loadvid.onComplete.add(this.actionComplete, this);
             this.loadvid.play(false);
@@ -139,9 +143,13 @@ var Haxor;
             this.skip = this.game.add.button(this.game.world.width - 125, this.game.world.height - 75, 'skip', this.actionComplete, this, 2, 1, 0);
             this.skip.scale.setTo(2, 2);
         };
+        Boot.prototype.loadAudio = function () {
+            this.aload.getAudioPack(this.otherloader, this.game.cache.getText("audiolist"));
+            this.otherloader.start();
+        };
         Boot.prototype.actionComplete = function () {
             this.complete += 1;
-            if (this.complete == 2) {
+            if (this.complete === 2) {
                 window.charmap = this.game.cache.getText("charmap");
                 window.tth = new Haxor.TerminalTextHelper(this.game);
                 this.loadvid.stop();
@@ -368,16 +376,17 @@ var Haxor;
             _super.apply(this, arguments);
         }
         MainMenu.prototype.create = function () {
-            this.logo = null;
             window.tth.createMapAsync(this.reafy, this, Haxor.TermColor.WHITE, 0);
         };
         MainMenu.prototype.reafy = function (consoleFont) {
             consoleFont.text = "H4X0R";
             this.logo = this.game.add.image(this.game.world.centerX, this.game.world.centerY, consoleFont);
             this.logo.smoothed = false;
-            this.logo.scale = new Phaser.Point(7, 7);
+            this.logo.scale = new Phaser.Point(6.5, 6.5);
             var bounds = this.logo.getBounds();
-            this.logo.position = new Phaser.Point(this.game.world.centerX - (bounds.width * 3.5), this.game.world.centerY - (bounds.height * 3.5));
+            this.logo.position = new Phaser.Point(this.game.world.centerX - (bounds.width * 3.25), this.game.world.centerY - (bounds.height * 3.25));
+            this.game.sound.play("complab", 0.5, true);
+            this.game.sound.play("typing", 1, true);
         };
         MainMenu.prototype.update = function () {
         };
@@ -394,7 +403,7 @@ var Haxor;
     var Game = (function (_super) {
         __extends(Game, _super);
         function Game() {
-            _super.call(this, window.innerWidth, window.innerHeight, Phaser.CANVAS, 'content', null, false, false);
+            _super.call(this, window.innerWidth, window.innerHeight, Phaser.AUTO, 'content', null, false, false);
             this.state.add('Boot', Haxor.Boot, false);
             this.state.add('Mobile', Haxor.Mobile, false);
             this.state.add('MainMenu', Haxor.MainMenu, false);
@@ -426,3 +435,43 @@ window.onload = function () {
     }
     window.game = game;
 };
+var Haxor;
+(function (Haxor) {
+    var AudioLoad = (function () {
+        function AudioLoad() {
+            this.bestExtension = null;
+            this.loader = null;
+            var testEl = document.createElement("audio");
+            if (testEl.canPlayType('audio/mpeg;') != "") {
+                this.bestExtension = ".mp3";
+            }
+            else if (testEl.canPlayType('audio/ogg; codecs="vorbis"') != "") {
+                this.bestExtension = ".ogg";
+            }
+            else if (testEl.canPlayType('audio/wav; codecs="1"') != "") {
+                this.bestExtension = ".wav";
+            }
+            else {
+                console.warn("no audio formats working");
+            }
+            try {
+                testEl.remove();
+            }
+            catch (e) {
+                console.warn("failed to remove audio test element");
+            }
+        }
+        AudioLoad.prototype.getAudioPack = function (loader, text) {
+            this.loader = loader;
+            var keys = text.split(",");
+            for (var key in keys) {
+                this.getAudio(keys[key]);
+            }
+        };
+        AudioLoad.prototype.getAudio = function (key) {
+            this.loader.audio(key, "assets/audio/" + key + this.bestExtension, true);
+        };
+        return AudioLoad;
+    })();
+    Haxor.AudioLoad = AudioLoad;
+})(Haxor || (Haxor = {}));

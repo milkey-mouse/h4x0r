@@ -21,7 +21,7 @@ module Haxor
 	{   
 	    constructor()
 	    {
-            super(window.innerWidth, window.innerHeight, Phaser.CANVAS, 'content', null, false, false);
+            super(window.innerWidth, window.innerHeight, Phaser.AUTO, 'content', null, false, false);
             
             this.state.add('Boot', Boot, false);
             this.state.add('Mobile', Mobile, false);

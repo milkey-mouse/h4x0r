@@ -2,61 +2,52 @@ module Haxor
 {
 	export class AudioLoad
 	{
-		canPlay(type: string, testEl: HTMLAudioElement) : boolean
-		{
-			var result: boolean = false;
-			switch(type)
-			{
-				case "mp3":
-					result = (testEl.canPlayType('audio/mpeg;') != "");
-				case "ogg":
-					result = (testEl.canPlayType('audio/ogg; codecs="vorbis"') != "");
-                case "wav":
-					result = (testEl.canPlayType('audio/wav; codecs="1"') != "");
-			}
-			return result;
-		}
+        public bestExtension: string = null;
+        
+        private loader: Phaser.Loader = null;
 		
-		public mp3: boolean;
-		public ogg: boolean;
-        public wav: boolean;
-		
-		getAudioPack(loader: Phaser.Loader) : boolean
+		getAudioPack(loader: Phaser.Loader, text)
 		{
-			if(this.mp3) 
-			{
-				loader.pack("audio", "assets/mp3/pack.json");
-				return true;
-			}
-			else if(this.ogg)
-			{
-				loader.pack("audio", "assets/ogg/pack.json");
-				return true;
-			}
-            else if(this.wav) //last resort
+            this.loader = loader;
+            //forEach() doesn't work because of contexts or something
+            var keys: Array<string> = text.split(",");
+            for(var key in keys)
             {
-                loader.pack("audio", "assets/wav/pack.json");
+                this.getAudio(keys[key]);
             }
-			else
-			{
-				return false;
-			}
 		}
-		
+        
+        getAudio(key: string)
+        {
+            this.loader.audio(key, "assets/audio/" + key + this.bestExtension, true);
+        }
 		
 		constructor()
 		{
 			var testEl: HTMLAudioElement = document.createElement("audio");
-			this.mp3 = this.canPlay("mp3", testEl);
-			this.ogg = this.canPlay("ogg", testEl);
-            this.wav = this.canPlay("wav", testEl);
+            if(testEl.canPlayType('audio/mpeg;') != "") 
+			{
+				this.bestExtension = ".mp3";
+			}
+			else if(testEl.canPlayType('audio/ogg; codecs="vorbis"') != "")
+			{
+				this.bestExtension = ".ogg";
+			}
+            else if(testEl.canPlayType('audio/wav; codecs="1"') != "") //last resort
+            {
+                this.bestExtension = ".wav";
+            }
+			else
+			{
+                console.warn("no audio formats working");
+			}
 			try
 			{
 				testEl.remove();
 			}
 			catch(e)
 			{
-				console.warn("failed to remove video test element");
+				console.warn("failed to remove audio test element");
 			}
 		}
 	}

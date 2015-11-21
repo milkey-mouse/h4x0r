@@ -29,7 +29,7 @@ module Haxor
 			this.load.spritesheet("skip", "assets/skip.png", 50, 25);
 		}
 		
-		complete = 0;
+		complete: number = 0;
 		
 		otherloader: Phaser.Loader;
 		
@@ -53,13 +53,17 @@ module Haxor
 			//google webfonts stuff
 			window.WebFontConfig = {};
             window.WebFontConfig.google = { families: ['Inconsolata:latin','Open Sans:latin'] };
-			
+            
+            var aloader: Phaser.Loader = new Phaser.Loader(this.game);
+            aloader.text("audiolist", "audio.txt");
+            aloader.onLoadComplete.add(this.loadAudio, this);
+            aloader.start();
+            
 			this.otherloader = new Phaser.Loader(this.game);
-			this.otherloader.pack("main", "pack.json");
-            this.aload.getAudioPack(this.otherloader);
-			this.otherloader.onLoadComplete.add(this.addSkipButton, this);
+            
+            this.otherloader.pack("main", "pack.json");
+            this.otherloader.onLoadComplete.add(this.addSkipButton, this);
 			this.otherloader.onLoadComplete.add(this.actionComplete, this);
-			this.otherloader.start();
 			
 			this.loadvid = this.game.add.video("intro");
 			this.loadvid.onComplete.add(this.actionComplete, this);
@@ -81,11 +85,17 @@ module Haxor
 			this.skip = this.game.add.button(this.game.world.width - 125, this.game.world.height - 75, 'skip', this.actionComplete, this, 2, 1, 0);
 			this.skip.scale.setTo(2,2);
 		}
+        
+        loadAudio()
+        {
+            this.aload.getAudioPack(this.otherloader, this.game.cache.getText("audiolist"));
+            this.otherloader.start();
+        }
 		
 		actionComplete()
 		{
 			this.complete += 1;
-			if(this.complete == 2)
+			if(this.complete === 2)
 			{
 				window.charmap = this.game.cache.getText("charmap");
 				window.tth = new TerminalTextHelper(this.game);

@@ -1,9 +1,0 @@
-{ 
-    "main": [
-        {
-            "type": "audio",
-            "key": "complab",
-            "url": "complab.wav"
-        }
-    ]
-}
