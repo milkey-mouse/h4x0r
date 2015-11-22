@@ -25,7 +25,7 @@ module Haxor
 			var colors: number = 0;
 			var importantColors: number = 0;
 			
-			var tempBuffer = window.bops.create(offset+rgbSize);
+			var tempBuffer = window.bops.create(fileSize);
 			var pos: number = 0;
 			
 			window.bops.copy(window.bops.from(flag),tempBuffer,0,0,2);pos+=2;

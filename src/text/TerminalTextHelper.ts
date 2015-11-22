@@ -93,6 +93,7 @@ module Haxor
 			consoleFont.autoUpperCase = false;
             consoleFont.multiLine = true;
             consoleFont.align = Phaser.RetroFont.ALIGN_LEFT;
+            consoleFont.removeUnsupportedCharacters = function(s: any){return s};
             this.lastCallback.call(this.lastContext, consoleFont);
         }
         
