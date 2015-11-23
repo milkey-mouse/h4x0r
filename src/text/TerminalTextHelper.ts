@@ -1,5 +1,4 @@
 /// <reference path="../../tsDefinitions/phaser.d.ts" />
-/// <reference path="BitmapEncoder.ts" />
 
 module Haxor
 {

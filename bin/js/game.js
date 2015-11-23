@@ -207,7 +207,6 @@ var Haxor;
     Haxor.Mobile = Mobile;
 })(Haxor || (Haxor = {}));
 /// <reference path="../../tsDefinitions/phaser.d.ts" />
-/// <reference path="BitmapEncoder.ts" />
 var Haxor;
 (function (Haxor) {
     (function (TermColor) {
