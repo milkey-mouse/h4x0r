@@ -225,16 +225,18 @@ var Haxor;
         function TerminalTextHelper(game) {
             this.colors = [
                 [0, 0, 0],
-                [0, 0, 1],
-                [0, 1, 0],
-                [0, 1, 1],
                 [1, 0, 0],
+                [0, 1, 0],
+                [1, 1, 0],
+                [0, 0, 1],
                 [1, 0, 1],
-                [1, 0.5, 0],
+                [0, 0.5, 1],
                 [1.5, 1.5, 1.5],
-                [0.5, 0.5, 0.5],
+                [1.2, 1.2, 1.2],
             ];
             this.lastRequestedName = null;
+            this.callbacks = new Object();
+            this.contexts = new Object();
             this.lastCallback = null;
             this.lastContext = null;
             this.game = game;
@@ -264,31 +266,30 @@ var Haxor;
             var backcolor = this.brightenize(this.colors[background], backBrightness);
             return this.createColoredMap(forecolor[0], forecolor[1], forecolor[2], backcolor[0], backcolor[1], backcolor[2]);
         };
-        TerminalTextHelper.prototype.callback = function () {
-            var consoleFont = this.game.make.retroFont(this.lastRequestedName, 8, 12, window.charmap, 1);
+        TerminalTextHelper.prototype.callback = function (progress, key, success, totalLoaded, totalFiles) {
+            var consoleFont = this.game.make.retroFont(key, 8, 12, window.charmap, 1);
             consoleFont.autoUpperCase = false;
             consoleFont.multiLine = true;
             consoleFont.align = Phaser.RetroFont.ALIGN_LEFT;
             consoleFont.removeUnsupportedCharacters = function (s) { return s; };
-            this.lastCallback.call(this.lastContext, consoleFont);
+            if (this.callbacks[key] !== undefined) {
+                this.callbacks[key].call(this.contexts[key], consoleFont);
+                delete this.callbacks[key];
+                delete this.contexts[key];
+            }
         };
         TerminalTextHelper.prototype.createMapAsync = function (callback, callbackContext, foreground, foreBrightness, background, backBrightness) {
             if (background === void 0) { background = null; }
             if (backBrightness === void 0) { backBrightness = 1; }
-            this.lastRequestedName = "term_" + foreground.toString() + foreBrightness.toString() + (background === null ? "" : background.toString()) + (backBrightness === null ? "" : backBrightness.toString());
-            this.lastCallback = callback;
-            this.lastContext = callbackContext;
-            if (this.game.cache.checkImageKey(this.lastRequestedName)) {
-                if (callback !== null) {
-                    this.callback();
-                }
+            var name = "term_" + foreground.toString() + foreBrightness.toString() + (background === null ? "" : background.toString()) + (backBrightness === null ? "" : backBrightness.toString());
+            this.callbacks[name] = callback;
+            this.contexts[name] = callbackContext;
+            if (this.game.cache.checkImageKey(name)) {
+                this.callback(null, name, null, null, null);
                 return true;
             }
-            this.game.load.image(this.lastRequestedName, this.colorizeMap(foreground, foreBrightness, background, backBrightness));
-            if (callback !== null) {
-                this.game.load.onFileComplete.addOnce(this.callback, this);
-            }
-            ;
+            this.game.load.image(name, this.colorizeMap(foreground, foreBrightness, background, backBrightness));
+            this.game.load.onFileComplete.addOnce(this.callback, this);
             this.game.load.start();
         };
         TerminalTextHelper.prototype.createColoredMap = function (r, g, b, br, bg, bb) {
@@ -329,11 +330,12 @@ var Haxor;
         function MainMenu() {
             _super.apply(this, arguments);
             this.wackyEffects = new Array();
+            this.logo = null;
+            this.console = null;
         }
         MainMenu.prototype.create = function () {
             this.game.sound.play("complab", 0.6, true);
             this.game.sound.play("typing", 1, true);
-            window.tth.createColoredMap(255, 0, 0, 0, 0, 255);
             window.tth.createMapAsync(this.destroyOld, this, Haxor.TermColor.WHITE, 0);
         };
         MainMenu.prototype.destroyOld = function (consoleFont) {
@@ -348,15 +350,27 @@ var Haxor;
         };
         MainMenu.prototype.addNew = function (consoleFont) {
             consoleFont.text = "     ";
-            var logo = this.game.add.image(0, 0, consoleFont);
-            logo.smoothed = false;
-            logo.scale = new Phaser.Point(3, 3);
-            logo.position = new Phaser.Point(this.game.world.centerX - (logo.getBounds().width * 1.5), this.game.world.centerY);
+            this.logo = this.game.add.image(0, 20, consoleFont);
+            this.logo.scale = new Phaser.Point(3, 3);
+            this.logo.smoothed = false;
+            this.logo.position = new Phaser.Point(this.game.world.centerX - (this.logo.getBounds().width * 1.5), 20);
             this.wackyEffects.push(new Haxor.DecryptorEffect(this.game, consoleFont, "H4X0R"));
+        };
+        MainMenu.prototype.makeConsole = function (consoleFont) {
+            consoleFont.text = "Username: " + window.charmap;
+            this.console = this.game.add.image(10, 40, consoleFont);
+            this.console.position = new Phaser.Point(10, 40);
+            this.console.smoothed = false;
         };
         MainMenu.prototype.update = function () {
             for (var i = 0; i < this.wackyEffects.length; i++) {
+                if (this.wackyEffects[i] === undefined) {
+                    continue;
+                }
                 if (this.wackyEffects[i].decoded) {
+                    if (this.wackyEffects[i].targetText === "H4X0R") {
+                        window.tth.createMapAsync(this.makeConsole, this, Haxor.TermColor.GRAY, 1);
+                    }
                     this.wackyEffects[i] = null;
                     continue;
                 }
@@ -364,8 +378,14 @@ var Haxor;
             }
             for (var i = 0; i < this.wackyEffects.length; i++) {
                 if (this.wackyEffects[i] === null) {
-                    this.wackyEffects.splice(i, 1);
+                    delete this.wackyEffects[i];
                 }
+            }
+            if (this.logo !== null) {
+                this.logo.position = new Phaser.Point(this.game.world.centerX - (this.logo.getBounds().width / 2), 20);
+            }
+            if (this.console !== null) {
+                this.console.position = new Phaser.Point(10, 40);
             }
         };
         return MainMenu;
@@ -469,6 +489,7 @@ var Haxor;
             this.dectext = text;
             this.charmap = this.game.cache.getText("charmap");
             this.target = new Array(text.text.length);
+            this.targetText = target;
             for (var i = 0; i < text.text.length; i++) {
                 if (target === null) {
                     this.target[i] = null;

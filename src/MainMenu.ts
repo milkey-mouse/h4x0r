@@ -9,11 +9,14 @@ module Haxor
 	{
         wackyEffects: Array<DecryptorEffect> = new Array<DecryptorEffect>();
         
+        logo: Phaser.Image = null;
+        
+        console: Phaser.Image = null;
+        
 		create()
 		{
             this.game.sound.play("complab", 0.6, true);
             this.game.sound.play("typing", 1, true);
-            window.tth.createColoredMap(255,0,0,0,0,255);
             window.tth.createMapAsync(this.destroyOld, this, TermColor.WHITE, Brightness.BRIGHT);
 		}
         
@@ -32,19 +35,32 @@ module Haxor
         addNew(consoleFont: Phaser.RetroFont)
         {
             consoleFont.text = "     ";
-            var logo: Phaser.Image = this.game.add.image(0, 0, consoleFont);
-            logo.smoothed = false;
-            logo.scale = new Phaser.Point(3,3);
-            logo.position = new Phaser.Point(this.game.world.centerX-(logo.getBounds().width*1.5),this.game.world.centerY);
+            this.logo = this.game.add.image(0, 20, consoleFont);
+            this.logo.scale = new Phaser.Point(3,3);
+            this.logo.smoothed = false;
+            this.logo.position = new Phaser.Point(this.game.world.centerX-(this.logo.getBounds().width*1.5), 20);
             this.wackyEffects.push(new DecryptorEffect(this.game, consoleFont, "H4X0R"));
+        }
+        
+        makeConsole(consoleFont: Phaser.RetroFont)
+        {
+            consoleFont.text = "Username: " + window.charmap;
+            this.console = this.game.add.image(10, 40, consoleFont);
+            this.console.position = new Phaser.Point(10, 40);
+            this.console.smoothed = false;
         }
 		
 		update()
 		{
             for(var i=0;i<this.wackyEffects.length;i++)
             {
+                if(this.wackyEffects[i] === undefined) {continue;}
                 if(this.wackyEffects[i].decoded)
                 {
+                    if(this.wackyEffects[i].targetText === "H4X0R")
+                    {
+                        window.tth.createMapAsync(this.makeConsole, this, TermColor.GRAY, Brightness.NORMAL);
+                    }
                     this.wackyEffects[i] = null;
                     continue;
                 }
@@ -54,9 +70,17 @@ module Haxor
             {
                 if(this.wackyEffects[i] === null)
                 {
-                    this.wackyEffects.splice(i,1); //delete item at index
+                    delete this.wackyEffects[i]; //delete item at index
                 }
             }
-		}
+            if(this.logo !== null)
+            {
+                this.logo.position = new Phaser.Point(this.game.world.centerX-(this.logo.getBounds().width/2), 20);
+            }
+            if(this.console !== null)
+            {
+                this.console.position = new Phaser.Point(10, 40);
+            }
+        }
 	}
 }

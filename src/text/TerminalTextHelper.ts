@@ -39,14 +39,14 @@ module Haxor
     {
         colors: Array<Array<number>> = [
                 [0,   0,   0],
-                [0,   0,   1],
-                [0,   1,   0],
-                [0,   1,   1],
                 [1,   0,   0],
+                [0,   1,   0],
+                [1,   1,   0],
+                [0,   0,   1],
                 [1,   0,   1],
-                [1,   0.5, 0],
+                [0,   0.5, 1],
                 [1.5,   1.5,   1.5],
-                [0.5, 0.5, 0.5],
+                [1.2, 1.2, 1.2],
         ];
         
         brightenize(color: Array<number>, brightness: Brightness) //"brightenize" is perfectly cromulent if you ask me
@@ -82,32 +82,40 @@ module Haxor
         
         lastRequestedName: string = null;
         
+        private callbacks: Object = new Object();
+        
+        private contexts: Object = new Object();
+        
         private lastCallback: Function = null;
         
         private lastContext: any = null;
         
-        callback()
+        callback(progress: number, key: string, success: boolean, totalLoaded: number, totalFiles: number)
         {
-            var consoleFont: Phaser.RetroFont = this.game.make.retroFont(this.lastRequestedName, 8, 12, window.charmap, 1);
+            var consoleFont: Phaser.RetroFont = this.game.make.retroFont(key, 8, 12, window.charmap, 1);
 			consoleFont.autoUpperCase = false;
             consoleFont.multiLine = true;
             consoleFont.align = Phaser.RetroFont.ALIGN_LEFT;
             consoleFont.removeUnsupportedCharacters = function(s: any){return s};
-            this.lastCallback.call(this.lastContext, consoleFont);
+            if(this.callbacks[key] !== undefined)
+            {
+                this.callbacks[key].call(this.contexts[key], consoleFont);
+                delete this.callbacks[key]; delete this.contexts[key];
+            }
         }
         
         createMapAsync(callback: Function, callbackContext: any, foreground: TermColor, foreBrightness: Brightness, background: TermColor = null, backBrightness: Brightness = Brightness.NORMAL)
         {
-            this.lastRequestedName = "term_" + foreground.toString() + foreBrightness.toString() + (background === null ? "" : background.toString()) + (backBrightness === null ? "" : backBrightness.toString());
-            this.lastCallback = callback;
-            this.lastContext = callbackContext;
-            if(this.game.cache.checkImageKey(this.lastRequestedName))
+            var name: string = "term_" + foreground.toString() + foreBrightness.toString() + (background === null ? "" : background.toString()) + (backBrightness === null ? "" : backBrightness.toString());
+            this.callbacks[name] = callback;
+            this.contexts[name] = callbackContext;
+            if(this.game.cache.checkImageKey(name))
             {
-                if(callback!==null){this.callback();}
+                this.callback(null, name, null, null, null);
                 return true;
             }
-            this.game.load.image(this.lastRequestedName, this.colorizeMap(foreground, foreBrightness, background, backBrightness));
-            if(callback!==null){this.game.load.onFileComplete.addOnce(this.callback, this)};
+            this.game.load.image(name, this.colorizeMap(foreground, foreBrightness, background, backBrightness));
+            this.game.load.onFileComplete.addOnce(this.callback, this);
             this.game.load.start();
         }
         

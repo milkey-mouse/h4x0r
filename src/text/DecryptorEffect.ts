@@ -40,6 +40,7 @@ module Haxor
         game: Phaser.Game;
         charmap: string;
         target: Array<number>;
+        targetText: string;
         decoded: boolean = false;
         decEvent: Function = null;
         decCallback: any = null;
@@ -50,6 +51,7 @@ module Haxor
             this.dectext = text;
             this.charmap = this.game.cache.getText("charmap");
             this.target = new Array<number>(text.text.length);
+            this.targetText = target;
             for(var i=0;i<text.text.length;i++)
             {
                 if(target === null)
