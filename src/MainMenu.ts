@@ -13,6 +13,7 @@ module Haxor
 		{
             this.game.sound.play("complab", 0.6, true);
             this.game.sound.play("typing", 1, true);
+            window.tth.createColoredMap(255,0,0,0,0,255);
             window.tth.createMapAsync(this.destroyOld, this, TermColor.WHITE, Brightness.BRIGHT);
 		}
         
@@ -24,7 +25,7 @@ module Haxor
             logo.scale = new Phaser.Point(6.5,6.5);
             var bounds: PIXI.Rectangle = logo.getBounds();
             logo.position = new Phaser.Point(this.game.world.centerX-(bounds.width*3.25),this.game.world.centerY-(bounds.height*3.25));
-            this.wackyEffects.push(new DecryptorEffect(this.game, consoleFont, "     ");
+            this.wackyEffects.push(new DecryptorEffect(this.game, consoleFont, "     "));
             window.tth.createMapAsync(this.addNew, this, TermColor.WHITE, Brightness.BRIGHT);
         }
         

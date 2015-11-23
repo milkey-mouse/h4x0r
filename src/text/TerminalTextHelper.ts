@@ -70,7 +70,7 @@ module Haxor
             return newcolor;
         }
         
-        colorizeMap(foreground: TermColor, foreBrightness: Brightness, background: TermColor = null, backBrightness: Brightness = Brightness.NORMAL)
+        colorizeMap(foreground: TermColor, foreBrightness: Brightness, background: TermColor = null, backBrightness: Brightness = Brightness.NORMAL): string
         {
             var forecolor: Array<number> = this.brightenize(this.colors[foreground], foreBrightness);
             if(background === null)
@@ -107,12 +107,10 @@ module Haxor
                 if(callback!==null){this.callback();}
                 return true;
             }
-            var cmap: Phaser.BitmapData = this.colorizeMap(foreground, foreBrightness, background, backBrightness);
-            this.game.load.image(this.lastRequestedName, new BitmapEncoder().encodeBitmap(cmap.data, cmap.width, cmap.height));
+            this.game.load.image(this.lastRequestedName, this.colorizeMap(foreground, foreBrightness, background, backBrightness));
             if(callback!==null){this.game.load.onFileComplete.addOnce(this.callback, this)};
             this.game.load.start();
         }
-            
         
         original: Phaser.BitmapData;
         game: Phaser.Game;
@@ -122,19 +120,35 @@ module Haxor
         {
             this.game = game;
             this.original = this.game.make.bitmapData().load("terminal");
-            this.original.smoothed = false;
         }
         
-        createColoredMap(r: number, g: number, b: number, br: number = null, bg:number = null, bb:number = null): Phaser.BitmapData
+        createColoredMap(r: number, g: number, b: number, br: number = null, bg:number = null, bb:number = null): string
         {
-            if(br === null || bg === null || bb === null)
+            var benc = new window.PNGlib(this.original.width, this.original.height, 256);
+            var back: string = null;
+            if(br !== null && bg !== null && bb !== null)
             {
-                return this.original.replaceRGB(255,255,255,255,r,g,b,255);
+                back = benc.color(br, bg, bb, 255);
             }
             else
             {
-                return this.original.replaceRGB(255,255,255,255,r,g,b,255).replaceRGB(0,0,0,0,br,bg,bb,255);
+                back = benc.color(0, 0, 0, 0); //black alpha
             }
+            var front: string = benc.color(r, g, b, 255);
+            var j = 0;
+            for(var i=0;i<this.original.imageData.data.length;i+=4)
+            {
+                if(this.original.imageData.data[i] === 255)
+                {
+                    benc.buffer[benc.index(j % this.original.width,Math.floor(j/this.original.width))] = front;
+                }
+                else
+                {
+                    benc.buffer[benc.index(j%this.original.width,Math.floor(j/this.original.width))] = back;
+                }
+                j++;
+            }
+            return benc.getBase64();
         }
     }
 }

@@ -15,6 +15,8 @@ module Haxor
         //external stuff
         bops: any;
         WebFontConfig: any;
+        crc32: Array<number>;
+        PNGlib: any;
     }
     
 	export class Game extends Phaser.Game

@@ -91,6 +91,27 @@ module Haxor
             this.aload.getAudioPack(this.otherloader, this.game.cache.getText("audiolist"));
             this.otherloader.start();
         }
+        
+        createCRCLookup()
+        {
+            window.crc32 = new Array<number>(256);
+            for (var i = 0; i < 256; i++)
+            {
+                var c = i;
+                for (var j = 0; j < 8; j++)
+                {
+                    if (c & 1)
+                    {
+                        c = -306674912 ^ ((c >> 1) & 0x7fffffff);
+                    }
+                    else
+                    {
+                        c = (c >> 1) & 0x7fffffff;
+                    }
+                }
+			    window.crc32[i] = c;
+            }
+        }
 		
 		actionComplete()
 		{
@@ -99,6 +120,7 @@ module Haxor
 			{
 				window.charmap = this.game.cache.getText("charmap");
 				window.tth = new TerminalTextHelper(this.game);
+                this.createCRCLookup();
 				this.loadvid.stop();
 				this.loadvid.destroy();
 				this.game.state.start("MainMenu", true, false);

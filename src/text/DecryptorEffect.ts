@@ -14,14 +14,11 @@ module Haxor
                 if(val !== this.target[i])
                 {
                     justDecoded = false;
-                    else if(val === this.charmap.length)
+                    if(val === this.charmap.length)
                     {
                         val = 0;
                     }
-                    else
-                    {
-                        val++;
-                    }
+                    val++;
                 }
                 chars[i] = this.charmap.charAt(val);
             }
