@@ -7,10 +7,10 @@ module Haxor
         update()
         {
             var justDecoded = true;
-            var chars: Array<string> = new Array<string>(this.dectext.text.length);
-            for(var i=0;i<this.dectext.text.length;i++)
+            var chars: Array<string> = new Array<string>(this._text.length);
+            for(var i=0;i<this._text.length;i++)
             {
-                var val: number = this.charmap.indexOf(this.dectext.text.charAt(i));
+                var val: number = this.charmap.indexOf(this._text.charAt(i));
                 if(val !== this.target[i])
                 {
                     justDecoded = false;
@@ -22,7 +22,7 @@ module Haxor
                 }
                 chars[i] = this.charmap.charAt(val);
             }
-            this.dectext.text = chars.join("");
+            this._text = chars.join("");
             if(justDecoded)
             {
                 if(!this.decoded)
@@ -34,8 +34,10 @@ module Haxor
                     this.decoded = true;
                 }
             }
+            this.dectext.text = this._text;
         }
         
+        _text: string;
         dectext: Phaser.RetroFont;
         game: Phaser.Game;
         charmap: string;
@@ -49,6 +51,7 @@ module Haxor
         {
             this.game = game;
             this.dectext = text;
+            this._text = this.dectext.text;
             this.charmap = this.game.cache.getText("charmap");
             this.target = new Array<number>(text.text.length);
             this.targetText = target;
@@ -73,12 +76,12 @@ module Haxor
             }
             if(randomize)
             {
-                var chars: Array<string> = new Array<string>(this.dectext.text.length);
-                for(var i=0;i<this.dectext.text.length;i++)
+                var chars: Array<string> = new Array<string>(this._text.length);
+                for(var i=0;i<this._text.length;i++)
                 {
                     chars[i] = this.charmap.charAt(Math.floor(Math.random()*(this.charmap.length-1)+1));
                 }
-                this.dectext.text = chars.join("");
+                this._text = chars.join("");
             }
             if(onDecoded !== null)
             {

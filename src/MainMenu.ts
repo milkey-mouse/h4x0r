@@ -13,6 +13,8 @@ module Haxor
         
         console: Phaser.Image = null;
         
+        offset: number = null;
+        
 		create()
 		{
             this.game.sound.play("complab", 0.6, true);
@@ -28,7 +30,7 @@ module Haxor
             logo.scale = new Phaser.Point(6.5,6.5);
             var bounds: PIXI.Rectangle = logo.getBounds();
             logo.position = new Phaser.Point(this.game.world.centerX-(bounds.width*3.25),this.game.world.centerY-(bounds.height*3.25));
-            this.wackyEffects.push(new DecryptorEffect(this.game, consoleFont, "     "));
+            this.wackyEffects.push(new DecryptorEffect(this.game, consoleFont, "     ", false));
             window.tth.createMapAsync(this.addNew, this, TermColor.WHITE, Brightness.BRIGHT);
         }
         
@@ -45,8 +47,9 @@ module Haxor
         makeConsole(consoleFont: Phaser.RetroFont)
         {
             consoleFont.text = "Username: " + window.charmap;
-            this.console = this.game.add.image(10, 40, consoleFont);
-            this.console.position = new Phaser.Point(10, 40);
+            this.console = this.game.add.image(20, this.logo.getBounds().y+this.logo.getBounds().height+15, consoleFont);
+            this.console.position = new Phaser.Point(20, this.logo.getBounds().y+this.logo.getBounds().height+15);
+            this.offset = this.console.position.y - this.logo.position.y;
             this.console.smoothed = false;
         }
 		
@@ -79,7 +82,7 @@ module Haxor
             }
             if(this.console !== null)
             {
-                this.console.position = new Phaser.Point(10, 40);
+                this.console.position = new Phaser.Point(20, this.logo.position.y + this.offset);
             }
         }
 	}

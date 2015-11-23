@@ -332,6 +332,7 @@ var Haxor;
             this.wackyEffects = new Array();
             this.logo = null;
             this.console = null;
+            this.offset = null;
         }
         MainMenu.prototype.create = function () {
             this.game.sound.play("complab", 0.6, true);
@@ -345,7 +346,7 @@ var Haxor;
             logo.scale = new Phaser.Point(6.5, 6.5);
             var bounds = logo.getBounds();
             logo.position = new Phaser.Point(this.game.world.centerX - (bounds.width * 3.25), this.game.world.centerY - (bounds.height * 3.25));
-            this.wackyEffects.push(new Haxor.DecryptorEffect(this.game, consoleFont, "     "));
+            this.wackyEffects.push(new Haxor.DecryptorEffect(this.game, consoleFont, "     ", false));
             window.tth.createMapAsync(this.addNew, this, Haxor.TermColor.WHITE, 0);
         };
         MainMenu.prototype.addNew = function (consoleFont) {
@@ -358,8 +359,9 @@ var Haxor;
         };
         MainMenu.prototype.makeConsole = function (consoleFont) {
             consoleFont.text = "Username: " + window.charmap;
-            this.console = this.game.add.image(10, 40, consoleFont);
-            this.console.position = new Phaser.Point(10, 40);
+            this.console = this.game.add.image(20, this.logo.getBounds().y + this.logo.getBounds().height + 15, consoleFont);
+            this.console.position = new Phaser.Point(20, this.logo.getBounds().y + this.logo.getBounds().height + 15);
+            this.offset = this.console.position.y - this.logo.position.y;
             this.console.smoothed = false;
         };
         MainMenu.prototype.update = function () {
@@ -385,7 +387,7 @@ var Haxor;
                 this.logo.position = new Phaser.Point(this.game.world.centerX - (this.logo.getBounds().width / 2), 20);
             }
             if (this.console !== null) {
-                this.console.position = new Phaser.Point(10, 40);
+                this.console.position = new Phaser.Point(20, this.logo.position.y + this.offset);
             }
         };
         return MainMenu;
@@ -487,6 +489,7 @@ var Haxor;
             this.decCallback = null;
             this.game = game;
             this.dectext = text;
+            this._text = this.dectext.text;
             this.charmap = this.game.cache.getText("charmap");
             this.target = new Array(text.text.length);
             this.targetText = target;
@@ -505,11 +508,11 @@ var Haxor;
                 }
             }
             if (randomize) {
-                var chars = new Array(this.dectext.text.length);
-                for (var i = 0; i < this.dectext.text.length; i++) {
+                var chars = new Array(this._text.length);
+                for (var i = 0; i < this._text.length; i++) {
                     chars[i] = this.charmap.charAt(Math.floor(Math.random() * (this.charmap.length - 1) + 1));
                 }
-                this.dectext.text = chars.join("");
+                this._text = chars.join("");
             }
             if (onDecoded !== null) {
                 this.decEvent = onDecoded;
@@ -518,9 +521,9 @@ var Haxor;
         }
         DecryptorEffect.prototype.update = function () {
             var justDecoded = true;
-            var chars = new Array(this.dectext.text.length);
-            for (var i = 0; i < this.dectext.text.length; i++) {
-                var val = this.charmap.indexOf(this.dectext.text.charAt(i));
+            var chars = new Array(this._text.length);
+            for (var i = 0; i < this._text.length; i++) {
+                var val = this.charmap.indexOf(this._text.charAt(i));
                 if (val !== this.target[i]) {
                     justDecoded = false;
                     if (val === this.charmap.length) {
@@ -530,7 +533,7 @@ var Haxor;
                 }
                 chars[i] = this.charmap.charAt(val);
             }
-            this.dectext.text = chars.join("");
+            this._text = chars.join("");
             if (justDecoded) {
                 if (!this.decoded) {
                     if (this.decEvent !== null) {
@@ -539,6 +542,7 @@ var Haxor;
                     this.decoded = true;
                 }
             }
+            this.dectext.text = this._text;
         };
         return DecryptorEffect;
     })();
