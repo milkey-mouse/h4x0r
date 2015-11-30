@@ -1,8 +1,9 @@
 /// <reference path="../../tsDefinitions/phaser.d.ts" />
+/// <reference path="Effect.ts" />
 
 module Haxor
 {
-    export class DecryptorEffect
+    export class DecryptorEffect extends Effect
     {
         update()
         {
@@ -19,8 +20,13 @@ module Haxor
                         val = 0;
                     }
                     val++;
+                    chars[i] = this.charmap.charAt(val);
                 }
-                chars[i] = this.charmap.charAt(val);
+                else
+                {
+                    chars[i] = this.targetText.charAt(i);
+                }
+                
             }
             this._text = chars.join("");
             if(justDecoded)
@@ -29,32 +35,21 @@ module Haxor
                 {
                     if(this.decEvent !== null)
                     {
-                        this.decEvent.call(this.decCallback);
+                        this._text = this.targetText;
+                        this.decEvent.call(this.decContext);
                     }
                     this.decoded = true;
                 }
             }
-            this.dectext.text = this._text;
+            super.update();
         }
-        
-        _text: string;
-        dectext: Phaser.RetroFont;
-        game: Phaser.Game;
-        charmap: string;
+
         target: Array<number>;
-        targetText: string;
-        decoded: boolean = false;
-        decEvent: Function = null;
-        decCallback: any = null;
         
         constructor(game: Phaser.Game, text: Phaser.RetroFont, target: string = null, randomize: boolean = true, onDecoded: Function = null, decodedCallback: any = null)
         {
-            this.game = game;
-            this.dectext = text;
-            this._text = this.dectext.text;
-            this.charmap = this.game.cache.getText("charmap");
+            super(game,text,target,randomize,onDecoded,decodedCallback);
             this.target = new Array<number>(text.text.length);
-            this.targetText = target;
             for(var i=0;i<text.text.length;i++)
             {
                 if(target === null)
@@ -74,20 +69,7 @@ module Haxor
                     }
                 }
             }
-            if(randomize)
-            {
-                var chars: Array<string> = new Array<string>(this._text.length);
-                for(var i=0;i<this._text.length;i++)
-                {
-                    chars[i] = this.charmap.charAt(Math.floor(Math.random()*(this.charmap.length-1)+1));
-                }
-                this._text = chars.join("");
-            }
-            if(onDecoded !== null)
-            {
-                this.decEvent = onDecoded;
-                this.decCallback = decodedCallback;
-            }
+            
         }
     }
 }

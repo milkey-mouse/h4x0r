@@ -200,6 +200,7 @@ var Haxor;
         Mobile.prototype.backToGame = function () {
             var ch = new Haxor.CookieHelper();
             ch.createCookie("warnmobile", "yes", 365);
+            this.stage.setBackgroundColor(0x000000);
             this.game.state.start("Boot", true, true);
         };
         return Mobile;
@@ -321,8 +322,140 @@ var Haxor;
     })();
     Haxor.TerminalTextHelper = TerminalTextHelper;
 })(Haxor || (Haxor = {}));
+/// <reference path="../../tsDefinitions/phaser.d.ts" />
+var Haxor;
+(function (Haxor) {
+    var Effect = (function () {
+        function Effect(game, text, target, randomize, onDecoded, decodedCallback) {
+            if (target === void 0) { target = null; }
+            if (randomize === void 0) { randomize = true; }
+            if (onDecoded === void 0) { onDecoded = null; }
+            if (decodedCallback === void 0) { decodedCallback = null; }
+            this.charmap = window.charmap;
+            this.decoded = false;
+            this.decEvent = null;
+            this.decContext = null;
+            this.game = game;
+            this.dectext = text;
+            this._text = this.dectext.text;
+            this.targetText = target;
+            if (randomize) {
+                var chars = new Array(this._text.length);
+                for (var i = 0; i < this._text.length; i++) {
+                    chars[i] = this.charmap.charAt(Math.floor(Math.random() * (this.charmap.length - 1) + 1));
+                }
+                this._text = chars.join("");
+            }
+            if (onDecoded !== null) {
+                this.decEvent = onDecoded;
+                this.decContext = decodedCallback;
+            }
+        }
+        Effect.prototype.update = function () {
+            this.dectext.text = this._text;
+        };
+        return Effect;
+    })();
+    Haxor.Effect = Effect;
+})(Haxor || (Haxor = {}));
+/// <reference path="../../tsDefinitions/phaser.d.ts" />
+/// <reference path="Effect.ts" />
+var Haxor;
+(function (Haxor) {
+    var DecryptorEffect = (function (_super) {
+        __extends(DecryptorEffect, _super);
+        function DecryptorEffect(game, text, target, randomize, onDecoded, decodedCallback) {
+            if (target === void 0) { target = null; }
+            if (randomize === void 0) { randomize = true; }
+            if (onDecoded === void 0) { onDecoded = null; }
+            if (decodedCallback === void 0) { decodedCallback = null; }
+            _super.call(this, game, text, target, randomize, onDecoded, decodedCallback);
+            this.target = new Array(text.text.length);
+            for (var i = 0; i < text.text.length; i++) {
+                if (target === null) {
+                    this.target[i] = null;
+                }
+                else {
+                    var chr = target.charAt(i);
+                    if (chr === "") {
+                        this.target[i] = null;
+                    }
+                    else {
+                        this.target[i] = this.charmap.indexOf(chr);
+                    }
+                }
+            }
+        }
+        DecryptorEffect.prototype.update = function () {
+            var justDecoded = true;
+            var chars = new Array(this._text.length);
+            for (var i = 0; i < this._text.length; i++) {
+                var val = this.charmap.indexOf(this._text.charAt(i));
+                if (val !== this.target[i]) {
+                    justDecoded = false;
+                    if (val === this.charmap.length) {
+                        val = 0;
+                    }
+                    val++;
+                    chars[i] = this.charmap.charAt(val);
+                }
+                else {
+                    chars[i] = this.targetText.charAt(i);
+                }
+            }
+            this._text = chars.join("");
+            if (justDecoded) {
+                if (!this.decoded) {
+                    if (this.decEvent !== null) {
+                        this._text = this.targetText;
+                        this.decEvent.call(this.decContext);
+                    }
+                    this.decoded = true;
+                }
+            }
+            _super.prototype.update.call(this);
+        };
+        return DecryptorEffect;
+    })(Haxor.Effect);
+    Haxor.DecryptorEffect = DecryptorEffect;
+})(Haxor || (Haxor = {}));
+/// <reference path="../../tsDefinitions/phaser.d.ts" />
+/// <reference path="Effect.ts" />
+var Haxor;
+(function (Haxor) {
+    var TypingEffect = (function (_super) {
+        __extends(TypingEffect, _super);
+        function TypingEffect(game, text, target, onDecoded, decodedCallback) {
+            if (onDecoded === void 0) { onDecoded = null; }
+            if (decodedCallback === void 0) { decodedCallback = null; }
+            _super.call(this, game, text, target, false, onDecoded, decodedCallback);
+            this.charIndex = 0;
+            text.text = "";
+        }
+        TypingEffect.prototype.update = function () {
+            if (this.charIndex >= this.targetText.length && !this.decoded) {
+                if (this.decEvent !== null) {
+                    this.decEvent.call(this.decContext);
+                }
+                this.decoded = true;
+                return;
+            }
+            if (this.decoded) {
+                return;
+            }
+            this._text += this.targetText.charAt(this.charIndex);
+            this.charIndex++;
+            _super.prototype.update.call(this);
+        };
+        return TypingEffect;
+    })(Haxor.Effect);
+    Haxor.TypingEffect = TypingEffect;
+})(Haxor || (Haxor = {}));
 /// <reference path="../tsDefinitions/phaser.d.ts" />
 /// <reference path="text/TerminalTextHelper.ts" />
+/// <reference path="text/DecryptorEffect.ts" />
+/// <reference path="text/TypingEffect.ts" />
+/// <reference path="text/Effect.ts" />
 var Haxor;
 (function (Haxor) {
     var MainMenu = (function (_super) {
@@ -358,11 +491,11 @@ var Haxor;
             this.wackyEffects.push(new Haxor.DecryptorEffect(this.game, consoleFont, "H4X0R"));
         };
         MainMenu.prototype.makeConsole = function (consoleFont) {
-            consoleFont.text = "Username: " + window.charmap;
             this.console = this.game.add.image(20, this.logo.getBounds().y + this.logo.getBounds().height + 15, consoleFont);
             this.console.position = new Phaser.Point(20, this.logo.getBounds().y + this.logo.getBounds().height + 15);
             this.offset = this.console.position.y - this.logo.position.y;
             this.console.smoothed = false;
+            this.wackyEffects.push(new Haxor.TypingEffect(this.game, consoleFont, "Username: " + window.charmap));
         };
         MainMenu.prototype.update = function () {
             for (var i = 0; i < this.wackyEffects.length; i++) {
@@ -474,77 +607,4 @@ var Haxor;
         return AudioLoad;
     })();
     Haxor.AudioLoad = AudioLoad;
-})(Haxor || (Haxor = {}));
-/// <reference path="../../tsDefinitions/phaser.d.ts" />
-var Haxor;
-(function (Haxor) {
-    var DecryptorEffect = (function () {
-        function DecryptorEffect(game, text, target, randomize, onDecoded, decodedCallback) {
-            if (target === void 0) { target = null; }
-            if (randomize === void 0) { randomize = true; }
-            if (onDecoded === void 0) { onDecoded = null; }
-            if (decodedCallback === void 0) { decodedCallback = null; }
-            this.decoded = false;
-            this.decEvent = null;
-            this.decCallback = null;
-            this.game = game;
-            this.dectext = text;
-            this._text = this.dectext.text;
-            this.charmap = this.game.cache.getText("charmap");
-            this.target = new Array(text.text.length);
-            this.targetText = target;
-            for (var i = 0; i < text.text.length; i++) {
-                if (target === null) {
-                    this.target[i] = null;
-                }
-                else {
-                    var chr = target.charAt(i);
-                    if (chr === "") {
-                        this.target[i] = null;
-                    }
-                    else {
-                        this.target[i] = this.charmap.indexOf(chr);
-                    }
-                }
-            }
-            if (randomize) {
-                var chars = new Array(this._text.length);
-                for (var i = 0; i < this._text.length; i++) {
-                    chars[i] = this.charmap.charAt(Math.floor(Math.random() * (this.charmap.length - 1) + 1));
-                }
-                this._text = chars.join("");
-            }
-            if (onDecoded !== null) {
-                this.decEvent = onDecoded;
-                this.decCallback = decodedCallback;
-            }
-        }
-        DecryptorEffect.prototype.update = function () {
-            var justDecoded = true;
-            var chars = new Array(this._text.length);
-            for (var i = 0; i < this._text.length; i++) {
-                var val = this.charmap.indexOf(this._text.charAt(i));
-                if (val !== this.target[i]) {
-                    justDecoded = false;
-                    if (val === this.charmap.length) {
-                        val = 0;
-                    }
-                    val++;
-                }
-                chars[i] = this.charmap.charAt(val);
-            }
-            this._text = chars.join("");
-            if (justDecoded) {
-                if (!this.decoded) {
-                    if (this.decEvent !== null) {
-                        this.decEvent.call(this.decCallback);
-                    }
-                    this.decoded = true;
-                }
-            }
-            this.dectext.text = this._text;
-        };
-        return DecryptorEffect;
-    })();
-    Haxor.DecryptorEffect = DecryptorEffect;
 })(Haxor || (Haxor = {}));

@@ -24,6 +24,7 @@ module Haxor
 		{
 			var ch = new CookieHelper();
 			ch.createCookie("warnmobile", "yes", 365);
+            this.stage.setBackgroundColor(0x000000);
 			this.game.state.start("Boot", true, true);
 		}
 	}

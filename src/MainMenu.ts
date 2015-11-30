@@ -1,5 +1,8 @@
 /// <reference path="../tsDefinitions/phaser.d.ts" />
 /// <reference path="text/TerminalTextHelper.ts" />
+/// <reference path="text/DecryptorEffect.ts" />
+/// <reference path="text/TypingEffect.ts" />
+/// <reference path="text/Effect.ts" />
 
 module Haxor
 {
@@ -7,7 +10,7 @@ module Haxor
 	
 	export class MainMenu extends Phaser.State
 	{
-        wackyEffects: Array<DecryptorEffect> = new Array<DecryptorEffect>();
+        wackyEffects: Array<Effect> = new Array<Effect>();
         
         logo: Phaser.Image = null;
         
@@ -46,11 +49,11 @@ module Haxor
         
         makeConsole(consoleFont: Phaser.RetroFont)
         {
-            consoleFont.text = "Username: " + window.charmap;
             this.console = this.game.add.image(20, this.logo.getBounds().y+this.logo.getBounds().height+15, consoleFont);
             this.console.position = new Phaser.Point(20, this.logo.getBounds().y+this.logo.getBounds().height+15);
             this.offset = this.console.position.y - this.logo.position.y;
             this.console.smoothed = false;
+            this.wackyEffects.push(new TypingEffect(this.game, consoleFont, "Username: " + window.charmap));
         }
 		
 		update()
