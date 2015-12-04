@@ -1,6 +1,7 @@
 # H4X0R
 
 [![Join the chat at https://gitter.im/milkey-mouse/h4x0r](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/milkey-mouse/h4x0r?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A game about what the NCIS writers think hacking is.
 
 #About
